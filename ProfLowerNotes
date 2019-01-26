@@ -1,0 +1,10 @@
+For 208, we'd like to do a lab introducing our students to R (ggplot, basic data table manipulation (subsetting, summary stats), and performing t-tests (and maybe regression?)) in R. Could also include calculation of Shannon diversity indices. It would be awesome if your students could take a crack at it and then I could combine the best of both! What is the timeline?
+
+The intent is that the students will use the skills they gain in plotting, summarizing data, and t-tests to analyze their data from two labs in 208: trail cams and leaf pack. For trail cam, the idea is to get them hypothesis testing about animal use of different habitats. For the leaf pack lab, we will be comparing benthic invertebrate abundance/diversity (and maybe dry weight of leaves?) of leaf packs placed into streams of different conditions. 
+
+Some datasets I have thought of to work with are:
+(1) Fisher's (Anderson's) Iris dataset (can be found in datasets(iris))
+(2) Simplified microbiome data from last year (this is a bit complicated in the form that they allow you to download the data in - it requires a lot of parsing that I haven't done yet)
+(3) The human demography data from the cemetery lab that we decided drop from 208 this year. I believe Morgan has the link to the big dataset for this? This would be plotting survivorship curves.
+(4) Data from the Grants from different years of measuring finches (attached). This data is used to show increased hybridization between two species over time. Could do regression of beak depth vs length to look @ correlation. Could do t-test between the species in 1975 vs 2012. They use it in their book to generate the plots in the screenshot below:
+
