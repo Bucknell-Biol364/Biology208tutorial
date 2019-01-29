@@ -5,7 +5,7 @@ date: "1/29/2019"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=}
 datasets::iris
 ?iris
 head(iris)
@@ -23,16 +23,47 @@ iris
 3. survivorship/mortality work
   -figure
 
-```{r cars}
-summary(cars)
+We can also use R to investigate and explore other datasets, as well as answer different types of questions. 
+
+```{r Shannon-diversity index}
+
+#first need to install vegan
+
+#load vegan 
+library(vegan)
+
+#Using a preloaded dataset BCI
+data("BCI")
+
+#look at BCI dataset
+BCI
+
+#investigate this dataset
+ncol(BCI)
+colnames(BCI)
+nrow(BCI)
+rownames(BCI)
+
+
+#Two different ways to get shannon-diversity index for each site
+diversity(BCI)
+diversity_dataset <- diversity(BCI, index= "shannon", MARGIN = 1, base = exp(1))
+diversity_dataset
+
+#investigate diversity_dataset
+plot(diversity_dataset)
+summary(diversity_dataset)
+
+#getting the median diversity
+median(diversity_dataset)
+
+#getting the average diversity
+mean(diversity_dataset)
+
+#Creating a species accumulation curve
+species_accumulation <- specaccum(BCI)
+plot(species_accumulation) 
+plot(species_accumulation, ci.type="poly", col="red", lwd=2, ci.lty=0, ci.col="lightblue", ylab ="Species Accumulation" ) 
+
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
