@@ -5,13 +5,8 @@ date: "1/29/2019"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-datasets::iris
-?iris
-head(iris)
-summary(iris)
-iris
-```
+
+
 
 1. General data work with iris (QHP):
   -data exploration: shaprio test, qqplot 
@@ -23,16 +18,21 @@ iris
 3. survivorship/mortality work
   -figure
 
-```{r cars}
-summary(cars)
+```{r J}
+if (!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
+if (!require("UsingR")) install.packages("UsingR"); library(UsingR)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r setup, include=TRUE}
+datasets::iris
+head(iris)
+tail(iris)
+summary(iris)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+```{rJ}
+
+```
+
