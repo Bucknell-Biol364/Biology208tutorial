@@ -5,13 +5,18 @@ date: "1/29/2019"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+<<<<<<< HEAD
+```{r setup, include=}
 datasets::iris
 ?iris
 head(iris)
 summary(iris)
 iris
 ```
+=======
+
+
+>>>>>>> 3a4acfd784e20c5cf0b0e2b33a583e678264cde4
 
 1. General data work with iris (QHP):
   -data exploration: shaprio test, qqplot 
@@ -61,11 +66,74 @@ fp1840 <- subset(demographyData,"Pre-1840 Female" != "NA")
 
 ```{r Plot Survivorship}
 
+<<<<<<< HEAD
 ```
 
 - test differences in life expectancy between men and women
 
 ```{r Test Life Expectancy}
 
+=======
+<<<<<<< HEAD
+We can also use R to investigate and explore other datasets, as well as answer different types of questions. 
+
+```{r Shannon-diversity index}
+
+#first need to install vegan
+
+#load vegan 
+library(vegan)
+
+#Using a preloaded dataset BCI
+data("BCI")
+
+#look at BCI dataset
+BCI
+
+#investigate this dataset
+ncol(BCI)
+colnames(BCI)
+nrow(BCI)
+rownames(BCI)
+
+
+#Two different ways to get shannon-diversity index for each site
+diversity(BCI)
+diversity_dataset <- diversity(BCI, index= "shannon", MARGIN = 1, base = exp(1))
+diversity_dataset
+
+#investigate diversity_dataset
+plot(diversity_dataset)
+summary(diversity_dataset)
+
+#getting the median diversity
+median(diversity_dataset)
+
+#getting the average diversity
+mean(diversity_dataset)
+
+#Creating a species accumulation curve
+species_accumulation <- specaccum(BCI)
+plot(species_accumulation) 
+plot(species_accumulation, ci.type="poly", col="red", lwd=2, ci.lty=0, ci.col="lightblue", ylab ="Species Accumulation" ) 
+=======
+```{r J}
+if (!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
+if (!require("UsingR")) install.packages("UsingR"); library(UsingR)
+```
+
+```{r setup, include=TRUE}
+datasets::iris
+head(iris)
+tail(iris)
+summary(iris)
+```
+
+
+
+```{rJ}
+>>>>>>> 3a4acfd784e20c5cf0b0e2b33a583e678264cde4
+
+>>>>>>> 9ab1e0ea05c9f589766dd3fce1aafb7d59d4e872
 ```
 
