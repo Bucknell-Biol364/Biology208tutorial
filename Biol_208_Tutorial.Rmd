@@ -54,9 +54,10 @@ colnames(BCI)
 nrow(BCI)
 rownames(BCI)
 
-
 #Two different ways to get shannon-diversity index for each site
 diversity(BCI)
+
+#This second method is more complex, but allows us to choose other possible indices to use instead of Shannon. Here we are going to assign our calculation to a new dataset labelled diversity_dataset
 diversity_dataset <- diversity(BCI, index= "shannon", MARGIN = 1, base = exp(1))
 diversity_dataset
 
@@ -77,15 +78,21 @@ median(diversity_dataset)
 #getting the average diversity
 mean(diversity_dataset)
 
-#Creating a species accumulation curve
+#Creating a species accumulation curve. Species accumulation curves allow us to visualize how many species are present for a certain number of sites. Among other functions, it allows us to determine if species count is increasing with sampling effort (number of sites).
 species_accumulation <- specaccum(BCI)
 
-#Plotting a species accumulation curve
+#Plotting a basic species accumulation curve
 plot(species_accumulation) 
 
-
-
-plot(species_accumulation, ci.type="poly", col="red", lwd=2, ci.lty=0, ci.col="lightblue", ylab ="Species Accumulation" ) 
+#We can edit this graph to better visualize the data, and to be generally more visually appealing 
+#Aesthetics include:
+#ci.type = bar, line, or polygon; Type of confidence interval drawn on the figure. 
+#col=""; color of species accumulation line
+#lwd= ; width of line
+#ci.lty= 0,1,2,3... ; Type of border on confidence polygon or confidence lines
+#ci.col=""; color for confidence line or polygon
+#ylab= "" ; this allows us to edit the label on the y axis
+plot(species_accumulation, ci.type="poly", col="blue", lwd=3, ci.lty=0, ci.col="orange", ylab ="Species Accumulation") 
 ```
 
 ```{r J}
@@ -94,10 +101,27 @@ if (!require("UsingR")) install.packages("UsingR"); library(UsingR)
 ```
 
 ```{r setup, include=TRUE}
+library(ggplot2)
 datasets::iris
 head(iris)
 tail(iris)
 summary(iris)
+
+#print out the whole dataset
+iris
+
+ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+
+  geom_point(aes(colour = factor(Species)), shape =1, size=3)+
+  theme_classic() +
+  geom_smooth(method=lm, color="blue", se=TRUE)+
+  xlab("Sepal Length")+
+  ylab("Petal Length")+
+  ylim(0,8)+
+  labs(color = "Species")
+
+  #xlim(0,8) not sure if we want to include this change as it makes the graph a little goofy looking
+
+#http://www.cookbook-r.com/Graphs/Legends_(ggplot2)/
 ```
 
 
