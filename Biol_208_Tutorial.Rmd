@@ -131,6 +131,17 @@ ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+
   
 ---------- KE
 
+
+
+
+
+
+
+
+
+-------
+
+
 - upload data from an excel file 
   - install readxl
   
@@ -143,21 +154,75 @@ View(demographyData)
 ```
 
 
-
-
 - subset into groups based on year and sex
 
 ```{r Subsets}
-fp1840 <- subset(demographyData,"Pre-1840 Female" != "NA")
+fpre1840 <- subset(demographyData, select = "Pre-1840 Female")
+mpre1840 <- subset(demographyData, select = "Pre-1840 Male")
 
 ```
 
 
 - calculate proportion alive for each age class
 
-```{r Calculate Proportions}
+
+```{r Functions}
+
+#function that calculates the number of people still alive
+numStillAlive <- function(subset1) { 
+  totalStartAlive <- sum(subset1)
+  for (i in row(subset1)){
+    sumDead <- sum(subset1[1:i,1])
+    stillAlive <- totalStartAlive - sumDead
+    listStillAlive <- c(listStillAlive,stillAlive)
+  }
+  return(listStillAlive)
+}
+
+indvStillAlive <- as.data.frame(numStillAlive(fpre1840))
+print(indvStillAlive)
+
+proportionAlive <- function(data.frame) {
+  for (i in col(indvStillAlive)) {
+    a <- indvStillAlive[i]/indvStillAlive[1]
+    list <- c(list,a)
+  }
+  return(list)
+}
+
+variable <- proportionAlive(indvStillAlive)
+
+
+
+indvStillAlive[1]
+indvStillAlive[4]/indvStillAlive[1]
+
+#function that finds the proportion of people still alive
+propStillAlive <- function(list) {
+  for (i in row(list)) {
+    propAlive <- list[i]/list[1]
+    listOfPropAlive <- c(listOfPropAlive,propAlive)
+  }
+  return(listPropAlive)
+}
+
+peepStillAlive <- propStillAlive(indvStillAlive)
+print(propAStillAlive)
+
 
 ```
+
+
+```{r Calculate Proportions}
+fpre1840alive <- numStillAlive(fpre1840)
+fpre1840prop <- proportionAlive(fpre1840alive)
+
+mpre1840alive <- as.data.frame(numStillAlive(mpre1840))
+mpre1840prop <- proportionAlive(mpre1840alive)
+
+
+```
+
 
 
 - plot survivorship curve
