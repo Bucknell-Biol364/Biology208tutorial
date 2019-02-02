@@ -131,10 +131,81 @@ ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+
   
 ---------- KE
 
+```{r}
+## Load survival package
+library(survival)
+## List datasets in survival package
+data(package = "survival")
+
+## Load lung data
+data(lung)
+
+## Show first 6 rows
+head(lung)
+```
+
+```{r}
+## Add survival object
+lung$SurvObj <- with(lung, Surv(time, status == 2))
+
+## Check data
+head(lung)
+```
 
 
+```{r}
+## Kaplan-Meier estimator. The "log-log" confidence interval is preferred.
+km.as.one <- survfit(SurvObj ~ 1, data = lung, conf.type = "log-log")
+km.by.sex <- survfit(SurvObj ~ sex, data = lung, conf.type = "log-log")
+
+## Show object
+km.as.one
+survfit(formula = SurvObj ~ 1, data = lung, conf.type = "log-log")
+
+km.by.sex
+survfit(formula = SurvObj ~ sex, data = lung, conf.type = "log-log")
+
+## See survival estimates at given time (lots of outputs)
+## summary(km.as.one)
+## summary(km.by.sex)
+
+## Plotting without any specification
+plot(km.as.one)
+plot(km.by.sex)
+```
+
+```{r}
+## Load rms package
+install.packages(rms)
+library(rms)
+
+## without specification
+survplot(km.by.sex)
+```
+
+```{r}
+## Without dots
+survplot(fit  = km.by.sex,
+         conf = c("none","bands","bars")[1],
+         xlab = "", ylab = "Survival",
+         ## xlim(0,100),
+         label.curves = TRUE,                     # label curves directly
+         ## label.curves = list(keys = "lines"),  # legend instead of direct label
+         levels.only  = FALSE,                    # show only levels, no label
+         abbrev.label = FALSE,                    # if label used, abbreviate
+         ## fun = function(x) {1 - x},            # Cumulative probability plot         
+         loglog   = FALSE,                        # log(-log Survival) plot
+         logt     = FALSE,                        # log time
+         time.inc = 100,                          # time increment
+         dots     = FALSE,                         # dot grid
+         n.risk   = TRUE,                         # show number at risk
+         ## srt.n.risk = 0, sep.n.risk = 0.056, adj.n.risk = 1,
+         ## y.n.risk = 0, cex.n.risk = 0.6
+         )
 
 
+#https://rstudio-pubs-static.s3.amazonaws.com/5588_72eb65bfbe0a4cb7b655d2eee0751584.html
+```
 
 
 
@@ -148,6 +219,10 @@ ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+
 ```{r Upload Data }
 install.packages("readxl")
 library(readxl)
+library(ggplot2)
+library(cowplot)
+
+
 demographyData <- read_excel("BIO208_Demog_Calcs_Master.xlsx")
 View(demographyData)
 
@@ -179,53 +254,43 @@ numStillAlive <- function(subset1) {
   return(listStillAlive)
 }
 
-indvStillAlive <- as.data.frame(numStillAlive(fpre1840))
-print(indvStillAlive)
 
-proportionAlive <- function(data.frame) {
-  for (i in col(indvStillAlive)) {
-    a <- indvStillAlive[i]/indvStillAlive[1]
+proportionAlive <- function(dataframe) {
+  for (i in col(dataframe)) {
+    a <- dataframe[i]/dataframe[1]
     list <- c(list,a)
   }
   return(list)
 }
-
-variable <- proportionAlive(indvStillAlive)
-
-
-
-indvStillAlive[1]
-indvStillAlive[4]/indvStillAlive[1]
-
-#function that finds the proportion of people still alive
-propStillAlive <- function(list) {
-  for (i in row(list)) {
-    propAlive <- list[i]/list[1]
-    listOfPropAlive <- c(listOfPropAlive,propAlive)
-  }
-  return(listPropAlive)
-}
-
-peepStillAlive <- propStillAlive(indvStillAlive)
-print(propAStillAlive)
 
 
 ```
 
 
 ```{r Calculate Proportions}
-fpre1840alive <- numStillAlive(fpre1840)
+fpre1840alive <- as.data.frame(numStillAlive(fpre1840))
 fpre1840prop <- proportionAlive(fpre1840alive)
+fpre1840$PropAlive <- fpre1840prop[2:21]
+fpre1840$xAxis <- 1:20
 
 mpre1840alive <- as.data.frame(numStillAlive(mpre1840))
 mpre1840prop <- proportionAlive(mpre1840alive)
+mpre1840$PropAlive <- mpre1840prop[2:21]
+mpre1840$xAxis <- ("0-5" "6-10" "11-15" "16-20" "21-25" "26-30" "31-35" "36-40" "41-45" "46-50" "51-55" "56-60" "61-65" "66-70" "71-75""76-80" "81-85" "86-90" "91-95" "96+")
+mpre1840$xAxis <- (0-5 6-10 11-15)
 
 
 ```
 
 
-
 - plot survivorship curve
 
 ```{r Plot Survivorship}
+ggplot(fpre1840) +
+  aes(x = as.numeric(xAxis), y = as.numeric(PropAlive)) +
+  geom_line() +
+  theme_cowplot() +
+  xlab("Days with enough sleep to feel rested (last 7 days)") + 
+  ylab("Survivorship")
 
+```
