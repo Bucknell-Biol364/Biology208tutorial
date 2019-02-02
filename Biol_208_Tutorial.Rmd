@@ -5,16 +5,6 @@ date: "1/29/2019"
 output: html_document
 ---
 
-
-```{r setup, include=}
-datasets::iris
-?iris
-head(iris)
-summary(iris)
-iris
-```
-
-
 1. General data work with iris (QHP):
   -data exploration: shaprio test, qqplot 
   -t-test
@@ -24,9 +14,87 @@ iris
   -maybe a figure? (provide a simple data set- clean csv/excel file, a template of sorts)
 3. survivorship/mortality work
   -figure
+  
+This chunk of code will install and load the two main packages we will using. The install.packages function installs the package and the library function makes sure the package is "turned on".
+```{r J}
+if (!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
+if (!require("UsingR")) install.packages("UsingR"); library(UsingR)
+```
+
+Datasets shows your entire data table. Head shows the first five lines and tail shows the last five lines. Running both are useful to make sure your data is complete and each has the same number of rows. Summary will provide the five number summary for each variable in the data set.
+```{r setup, include=TRUE}
+library(ggplot2)
+datasets::iris
+head(iris)
+tail(iris)
+summary(iris)
+```
+
+Before running any other tests or visual analyses of your data you should generate a hypothesis. In this example we will be testing the hypothesis the longer sepal lengths will generate longer petal lengths. To test this we should first create subsets of the data for each species.
+
+```{r}
+setosa <- subset(iris,Species == "setosa")
+versicolor <- subset(iris,Species == "versicolor")
+virginica <- subset(iris,Species == "virginica")
+```
+
+Next, since these variables are quantitative, you want to run the simple.eda function on each varibale from the main data set not the subsets..This function will display a histogram,boxplot, and QQ plot for each subset. The QQ plot shows if the data is normally distributed.
+
+```{r}
+simple.eda(iris$Sepal.Length)
+simple.eda(iris$Petal.Length)
+```
+To look at the distribution of species we will use a bar graph and a table, since it is a categorical variable.
+
+```{r}
+ggplot(iris) + 
+  aes(x=factor(Species)) +
+  geom_bar() +
+  theme_classic() +
+  xlab ("species")
+```
+```{r}
+table(iris$Species)
+```
 
 
+You can also use pie charts to display categorical data. However, due to the inability to tell differences in the sizes of each wedge of the pie they are usually not used. Bar graphs and tables are much more useful in displaying the distribution of a categorical variable.
 
+Next you run a shapiro test for each variable to determine if that varibale is actually normally distrubtred since it is sometimes hard to tell from the QQ plots.
+
+```{r}
+shapiro.test(iris$Sepal.Length)
+shapiro.test(iris$Petal.Length)
+```
+Since both p-values are less than 0.05 we reject the null hypothesis that the data comes from samples that are normally distrubted so we have to transform the data.
+
+```{r}
+simple.eda(log10(iris$Sepal.Length))
+simple.eda(log10(iris$Petal.Length))
+shapiro.test(log10(iris$Sepal.Length))
+shapiro.test(log10(iris$Petal.Length))
+```
+Since in the end petal length was not normally distributed we will create a scatterplot to help us visualize the data, but to determine if there is a signifcant effect we will have to run a mann whitney u test. 
+
+```{r}
+ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+
+  geom_point(aes(colour = factor(Species)), shape =1, size=3)+
+  theme_classic() +
+  geom_smooth(method=lm, color="blue", se=TRUE)+
+  xlab("Sepal Length")+
+  ylab("Petal Length")+
+  ylim(0,8)+
+  labs(color = "Species")
+```
+
+The following chunk of code is how to test if there is a significant relationship found in non parametric (data that isnt normally distirbuted) data.We will use the subsetted data for this test as we want to test the relationship for each species.
+
+```{r}
+wilcox.test(setosa$Petal.Length, setosa$Sepal.Length)
+wilcox.test(versicolor$Petal.Length, versicolor$Sepal.Length)
+wilcox.test(virginica$Petal.Length, virginica$Sepal.Length)
+```
+Since all three p-values are less than 0.05 this means that for each species sepal length affects petal length.
 
 We can also use R to investigate and explore other datasets, as well as answer different types of questions.
 
@@ -95,34 +163,6 @@ plot(species_accumulation)
 plot(species_accumulation, ci.type="poly", col="blue", lwd=3, ci.lty=0, ci.col="orange", ylab ="Species Accumulation") 
 ```
 
-```{r J}
-if (!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
-if (!require("UsingR")) install.packages("UsingR"); library(UsingR)
-```
-
-```{r setup, include=TRUE}
-library(ggplot2)
-datasets::iris
-head(iris)
-tail(iris)
-summary(iris)
-
-#print out the whole dataset
-iris
-
-ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+
-  geom_point(aes(colour = factor(Species)), shape =1, size=3)+
-  theme_classic() +
-  geom_smooth(method=lm, color="blue", se=TRUE)+
-  xlab("Sepal Length")+
-  ylab("Petal Length")+
-  ylim(0,8)+
-  labs(color = "Species")
-
-  #xlim(0,8) not sure if we want to include this change as it makes the graph a little goofy looking
-
-#http://www.cookbook-r.com/Graphs/Legends_(ggplot2)/
-```
 
 
 
