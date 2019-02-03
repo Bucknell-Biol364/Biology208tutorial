@@ -47,7 +47,7 @@ simple.eda(iris$Petal.Length)
 
 To look at the distribution of species we will use a bar graph and a table, since it is a categorical variable.
 
-```{r}
+```{r bar graph}
 ggplot(iris) + 
   aes(x=factor(Species)) +
   geom_bar() +
