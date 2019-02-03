@@ -6,17 +6,23 @@ output: html_document
 ---
 
 Welcome to R coding in 208!
-We will be providing a walkthrough of general R skills including: package loading, data visualization using ggplot2, and data analysis. Additionally we will introduce several packages that can aid in investigation of specific 208 topics and questions. 
+We will be providing a walkthrough of general R skills including: package loading, data visualization using ggplot2, and data analysis. Additionally we will introduce several packages that can aid in investigation of specific 208 topics and questions. This tutorial is split into three parts:
+  Part 1 - R review
+  Part 2 - Shannon-Diversity Index
+  Part 3 - Survivorship Curves
 
 
-#Part 1 
-This chunk of code will install and load the two main packages we will using. The install.packages function installs the package and the library function makes sure the package is "turned on".
+#Part 1: R Review
+In this part, we will cover how to install data visualization packages and use those to analyze data to test hypotheses.
+
+We will be using ggplot2 and UsingR, and we can install both using this chunk of code. The install.packages function installs the package and the library function makes sure the package is "turned on" once you have it in R.
 ```{r J}
 if (!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
 if (!require("UsingR")) install.packages("UsingR"); library(UsingR)
 ```
 
-Datasets shows your entire data table. Head shows the first five lines and tail shows the last five lines. Running both are useful to make sure your data is complete and each has the same number of rows. Summary will provide the five number summary for each variable in the data set.
+Datasets shows your entire data table. Head shows the first five lines and tail shows the last five lines. Running both are useful to make sure your data is complete and each column has the same number of rows. Summary will provide the five number summary for each variable in the data set and will let you know if there is any missing data ("NA"s).
+
 ```{r setup, include=TRUE}
 library(ggplot2)
 datasets::iris
@@ -25,39 +31,38 @@ tail(iris)
 summary(iris)
 ```
 
-Before running any other tests or visual analyses of your data you should generate a hypothesis. In this example we will be testing the hypothesis that the longer sepal lengths will generate longer petal lengths. To test this we should first create subsets of the data for each species.
+Before running any other tests or visual analyses of your data, you should generate a hypothesis. In this example we will be testing the hypothesis the longer sepal lengths will generate longer petal lengths. To test this we should first create subsets of the data for each species.
 
-```{r}
+```{r Subset}
 setosa <- subset(iris,Species == "setosa")
 versicolor <- subset(iris,Species == "versicolor")
 virginica <- subset(iris,Species == "virginica")
 ```
 
-Next, since these variables are quantitative, you want to run the simple.eda function on each varibale from the main data set not the subsets..This function will display a histogram,boxplot, and QQ plot for each subset. The QQ plot shows if the data is normally distributed.
+Next, since these variables are quantitative, you want to run the simple.eda function on each variable from the main data set not the subsets. This function will display a histogram, boxplot, and QQ plot for each subset. If the points follow the diagonal line in the QQ plot, then the data is normally distributed.
 
 ```{r}
 simple.eda(iris$Sepal.Length)
 simple.eda(iris$Petal.Length)
 ```
+
 To look at the distribution of species we will use a bar graph and a table, since it is a categorical variable.
 
 ```{r bar graph}
 ggplot(iris) + 
   aes(x=factor(Species)) +
-  geom_bar(aes(fill=factor(`Species`))) +
+  geom_bar() +
   theme_classic() +
-  xlab ("species") +
-  theme(legend.position="none")
-
+  xlab ("species")
 ```
 ```{r}
 table(iris$Species)
 ```
 
 
-You can also use pie charts to display categorical data. However, due to the inability to tell differences in the sizes of each wedge of the pie they are usually not used. Bar graphs and tables are much more useful in displaying the distribution of a categorical variable.
+You can also use pie charts to display categorical data. However, due to the inability to tell differences in the sizes of each wedge of the pie, they are usually not used. Bar graphs and tables are much more useful in displaying the distribution of a categorical variable.
 
-Next you run a shapiro test for each variable to determine if that varibale is actually normally distrubtred since it is sometimes hard to tell from the QQ plots.
+Next you run a shapiro test for each variable to determine if that varibale is actually normally distributed since it is sometimes hard to tell from the QQ plots.
 
 ```{r}
 shapiro.test(iris$Sepal.Length)
@@ -84,7 +89,7 @@ ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+
   labs(color = "Species")
 ```
 
-The following chunk of code is how to test if there is a significant relationship found in non parametric (data that isnt normally distirbuted) data. We will use the subsetted data for this test as we want to test the relationship for each species.
+The following chunk of code is how to test if there is a significant relationship found in non parametric (data that isnt normally distirbuted) data.We will use the subsetted data for this test as we want to test the relationship for each species.
 
 ```{r}
 wilcox.test(setosa$Petal.Length, setosa$Sepal.Length)
@@ -208,8 +213,8 @@ plot(km.by.sex)
 
 ```{r}
 ## Load rms package
-#install.packages(rms)
-#library(rms)
+install.packages(rms)
+library(rms)
 
 ## without specification
 #survplot(km.by.sex)
@@ -217,22 +222,22 @@ plot(km.by.sex)
 
 ```{r}
 ## Without dots
-#survplot(fit  = km.by.sex,
-#         conf = c("none","bands","bars")[1],
-#         xlab = "", ylab = "Survival",
-#         ## xlim(0,100),
-#         label.curves = TRUE,                     # label curves directly
-#         ## label.curves = list(keys = "lines"),  # legend instead of direct label
-#         abbrev.label = FALSE,                    # if label used, abbreviate
+survplot(fit  = km.by.sex,
+         conf = c("none","bands","bars")[1],
+         xlab = "", ylab = "Survival",
+         ## xlim(0,100),
+         label.curves = TRUE,                     # label curves directly
+         ## label.curves = list(keys = "lines"),  # legend instead of direct label
+         abbrev.label = FALSE,                    # if label used, abbreviate
          ## fun = function(x) {1 - x},            # Cumulative probability plot         
-#         loglog   = FALSE,                        # log(-log Survival) plot
-#         logt     = FALSE,                        # log time
-#         time.inc = 100,                          # time increment
-#         dots     = FALSE,                         # dot grid
-#         n.risk   = TRUE,                         # show number at risk
+         loglog   = FALSE,                        # log(-log Survival) plot
+         logt     = FALSE,                        # log time
+         time.inc = 100,                          # time increment
+         dots     = FALSE,                         # dot grid
+         n.risk   = TRUE,                         # show number at risk
          ## srt.n.risk = 0, sep.n.risk = 0.056, adj.n.risk = 1,
          ## y.n.risk = 0, cex.n.risk = 0.6
-#         )
+         )
 
 
 #https://rstudio-pubs-static.s3.amazonaws.com/5588_72eb65bfbe0a4cb7b655d2eee0751584.html
