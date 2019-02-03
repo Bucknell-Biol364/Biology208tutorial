@@ -16,7 +16,7 @@ We will be providing a walkthrough of general R skills including: package loadin
 In this part, we will cover how to install data visualization packages and use those to analyze data to test hypotheses.
 
 We will be using ggplot2 and UsingR, and we can install both using this chunk of code. The install.packages function installs the package and the library function makes sure the package is "turned on" once you have it in R.
-```{r J}
+```{r}
 if (!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
 if (!require("UsingR")) install.packages("UsingR"); library(UsingR)
 ```
