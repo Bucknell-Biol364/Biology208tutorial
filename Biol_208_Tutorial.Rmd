@@ -11,6 +11,7 @@ We will be providing a walkthrough of general R skills including: package loadin
   Part 2 - Shannon-Diversity Index
   Part 3 - Survivorship Curves
 
+
 #Part 1: R Review
 In this part, we will cover how to install data visualization packages and use those to analyze data to test hypotheses.
 
@@ -32,7 +33,7 @@ summary(iris)
 
 Before running any other tests or visual analyses of your data, you should generate a hypothesis. In this example we will be testing the hypothesis the longer sepal lengths will generate longer petal lengths. To test this we should first create subsets of the data for each species.
 
-```{r}
+```{r Subset}
 setosa <- subset(iris,Species == "setosa")
 versicolor <- subset(iris,Species == "versicolor")
 virginica <- subset(iris,Species == "virginica")
