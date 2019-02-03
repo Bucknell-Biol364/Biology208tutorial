@@ -94,7 +94,7 @@ wilcox.test(setosa$Petal.Length, setosa$Sepal.Length)
 wilcox.test(versicolor$Petal.Length, versicolor$Sepal.Length)
 wilcox.test(virginica$Petal.Length, virginica$Sepal.Length)
 ```
-Since all three p-values are less than 0.05 this means that for each species sepal length affects petal length.
+Since all three p-values are less than 0.05 this means that for each species sepal length affects petal length.There were other variables in the data set for Iris. Pick different variables, create your own hypothesis, and explore and test the significane of the data.
 
 We can also use R to investigate and explore other datasets, as well as answer different types of questions.
 
