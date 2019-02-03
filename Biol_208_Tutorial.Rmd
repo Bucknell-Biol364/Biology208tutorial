@@ -5,16 +5,11 @@ date: "1/29/2019"
 output: html_document
 ---
 
-1. General data work with iris (QHP):
-  -data exploration: shaprio test, qqplot 
-  -t-test
-  -regression
-  -bar graph vs. boxplot vs. piechart (boo)
-2. shannon-diversity calculation
-  -maybe a figure? (provide a simple data set- clean csv/excel file, a template of sorts)
-3. survivorship/mortality work
-  -figure
-  
+Welcome to R coding in 208!
+We will be providing a walkthrough of general R skills including: package loading, data visualization using ggplot2, and data analysis. Additionally we will introduce several packages that can aid in investigation of specific 208 topics and questions. 
+
+
+#Part 1 
 This chunk of code will install and load the two main packages we will using. The install.packages function installs the package and the library function makes sure the package is "turned on".
 ```{r J}
 if (!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
@@ -163,11 +158,6 @@ plot(species_accumulation)
 plot(species_accumulation, ci.type="poly", col="blue", lwd=3, ci.lty=0, ci.col="orange", ylab ="Species Accumulation") 
 ```
 
-
-
-
-
-
   
 ---------- KE
 
@@ -216,32 +206,31 @@ plot(km.by.sex)
 
 ```{r}
 ## Load rms package
-install.packages(rms)
-library(rms)
+#install.packages(rms)
+#library(rms)
 
 ## without specification
-survplot(km.by.sex)
+#survplot(km.by.sex)
 ```
 
 ```{r}
 ## Without dots
-survplot(fit  = km.by.sex,
-         conf = c("none","bands","bars")[1],
-         xlab = "", ylab = "Survival",
-         ## xlim(0,100),
-         label.curves = TRUE,                     # label curves directly
-         ## label.curves = list(keys = "lines"),  # legend instead of direct label
-         levels.only  = FALSE,                    # show only levels, no label
-         abbrev.label = FALSE,                    # if label used, abbreviate
+#survplot(fit  = km.by.sex,
+#         conf = c("none","bands","bars")[1],
+#         xlab = "", ylab = "Survival",
+#         ## xlim(0,100),
+#         label.curves = TRUE,                     # label curves directly
+#         ## label.curves = list(keys = "lines"),  # legend instead of direct label
+#         abbrev.label = FALSE,                    # if label used, abbreviate
          ## fun = function(x) {1 - x},            # Cumulative probability plot         
-         loglog   = FALSE,                        # log(-log Survival) plot
-         logt     = FALSE,                        # log time
-         time.inc = 100,                          # time increment
-         dots     = FALSE,                         # dot grid
-         n.risk   = TRUE,                         # show number at risk
+#         loglog   = FALSE,                        # log(-log Survival) plot
+#         logt     = FALSE,                        # log time
+#         time.inc = 100,                          # time increment
+#         dots     = FALSE,                         # dot grid
+#         n.risk   = TRUE,                         # show number at risk
          ## srt.n.risk = 0, sep.n.risk = 0.056, adj.n.risk = 1,
          ## y.n.risk = 0, cex.n.risk = 0.6
-         )
+#         )
 
 
 #https://rstudio-pubs-static.s3.amazonaws.com/5588_72eb65bfbe0a4cb7b655d2eee0751584.html
@@ -334,3 +323,8 @@ ggplot(fpre1840) +
   ylab("Survivorship")
 
 ```
+
+
+Trouble shooting:
+1.) 
+
