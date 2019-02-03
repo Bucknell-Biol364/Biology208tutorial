@@ -39,14 +39,14 @@ versicolor <- subset(iris,Species == "versicolor")
 virginica <- subset(iris,Species == "virginica")
 ```
 
-Next, since these variables are quantitative, you want to run the simple.eda function on each variable from the main data set not the subsets. This function will display a histogram, boxplot, and QQ plot for each subset. If the points follow the diagonal line in the QQ plot, then the data is normally distributed.
+Next, since these variables are quantitative, you want to run the simple.eda function on each variable from the main data set not the subsets. This function will display a histogram, boxplot, and QQ plot for each subset. If the data is normally distributed, then it is possible to use parametric tests to test the hypotheses - on a historgram, this looks like a curve where the middle is the highest and the two sides fall away evenly. If the points follow the diagonal line in the QQ plot, then the data is normally distributed.
 
 ```{r simple.eda}
 simple.eda(iris$Sepal.Length)
 simple.eda(iris$Petal.Length)
 ```
 
-To look at the distribution of species we will use a bar graph and a table, since it is a categorical variable.
+To look at the distribution of species we will use a bar graph and a table, since this is a categorical variable. 
 
 ```{r bar graph}
 ggplot(iris) + 
@@ -60,15 +60,16 @@ table(iris$Species)
 ```
 
 
-You can also use pie charts to display categorical data. However, due to the inability to tell differences in the sizes of each wedge of the pie, they are usually not used. Bar graphs and tables are much more useful in displaying the distribution of a categorical variable.
+You can also use pie charts to display categorical data. However, because it's hard to usefully distinguish between the sizes of each wedge of the pie, they are usually not used. Bar graphs and tables are much more useful in displaying the distribution of a categorical variable.
 
-Next you run a shapiro test for each variable to determine if that varibale is actually normally distributed since it is sometimes hard to tell from the QQ plots.
+You can also run a shapiro test for each variable to determine if that variable is actually normally distributed since it is sometimes hard to tell from the QQ plots.
 
 ```{r}
 shapiro.test(iris$Sepal.Length)
 shapiro.test(iris$Petal.Length)
 ```
-Since both p-values are less than 0.05 we reject the null hypothesis that the data comes from samples that are normally distrubted so we have to transform the data.
+
+Since both p-values are less than 0.05, we reject the null hypothesis that the data is normally distributed, so we have to transform the data.
 
 ```{r}
 simple.eda(log10(iris$Sepal.Length))
@@ -76,7 +77,8 @@ simple.eda(log10(iris$Petal.Length))
 shapiro.test(log10(iris$Sepal.Length))
 shapiro.test(log10(iris$Petal.Length))
 ```
-Since in the end petal length was not normally distributed we will create a scatterplot to help us visualize the data, but to determine if there is a signifcant effect we will have to run a mann whitney u test. 
+
+Since in the end petal length was not normally distributed, we will create a scatterplot to help us visualize the data. 
 
 ```{r}
 ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+
@@ -89,22 +91,21 @@ ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+
   labs(color = "Species")
 ```
 
-The following chunk of code is how to test if there is a significant relationship found in non parametric (data that isnt normally distirbuted) data.We will use the subsetted data for this test as we want to test the relationship for each species.
+However, to determine if there is a signifcant effect we will have to run a non-parametric test. A mann whitney u test, which is run using the following chunk of code, will work here. Since the species of each flower could have an effect on petal and sepal length, we will want to look at the relationship between these variables for each species individually. To do this, we will want to split the data up by species, which we can do by creating a subset for each one. 
 
 ```{r}
 wilcox.test(setosa$Petal.Length, setosa$Sepal.Length)
 wilcox.test(versicolor$Petal.Length, versicolor$Sepal.Length)
 wilcox.test(virginica$Petal.Length, virginica$Sepal.Length)
 ```
-Since all three p-values are less than 0.05 this means that for each species sepal length affects petal length.There were other variables in the data set for Iris. Pick different variables, create your own hypothesis, and explore and test the significane of the data.
 
-We can also use R to investigate and explore other datasets, as well as answer different types of questions.
+Since all three p-values are less than 0.05, sepal length affects petal length for each species. There were other variables in the data set for Iris. Pick different variables, create your own hypothesis, and explore and test the significane of the data.
 
-
-We can also use R to investigate and explore other datasets, as well as answer different types of questions. For example, we can use R to investigate diversity. One measure of diversity we learn about in 208 is the Shannon Diversity index. Conveniently, there is a package in R (vegan) specifically designed to calculate not only the Shannon Diversity index, but to also investigate other measures of diversity.
 
 
 #Part 2: Shannon Diversity Index
+We can also use R to investigate and explore other datasets, as well as answer different types of questions. For example, we can use R to investigate diversity. One measure of diversity we learn about in 208 is the Shannon Diversity index. Conveniently, there is a package in R (vegan) specifically designed to calculate not only the Shannon Diversity index, but to also investigate other measures of diversity.
+
 ```{r Shannon-diversity index}
 
 #first need to install vegan
@@ -165,92 +166,100 @@ plot(species_accumulation)
 plot(species_accumulation, ci.type="poly", col="blue", lwd=3, ci.lty=0, ci.col="orange", ylab ="Species Accumulation") 
 ```
 
-  
----------- KE
+
 #Part 3: Survivorship Curves
-```{r}
-## Load survival package
+Survivorship curves indicate the proportion of a population that is still alive after a certain period of time. Raw data is usually collected as the age of the individuals when they die, and you can make a curve by plotting the proportion of individuals still alive at a given age.
+
+The survival package in R has some useful datasets that can be used to practice making a survival curve. First, we can load the package and then pick the specific dataset, lung, to use for this example. Again, we can use head, tail, and summary to get a sense of the data.
+
+```{r Survival Package and Lung Data}
+# Load the survival package
 library(survival)
-## List datasets in survival package
+
+# See the datasets in the survival package
 data(package = "survival")
 
-## Load lung data
+# Load the lung data
 data(lung)
 
-## Show first 6 rows
+# First 5 rows of the lung data
 head(lung)
+tail(lung)
+summary(lung)
 ```
 
+The lung dataset shows the survival of patients with advanced lung cancer. 
+
+Inst = institution code
+Time = survival time (days)
+Status = censoring status (1 = censored, 2 = dead)
+Age = age (years)
+Sex = sex (1 = male, 2 = female)
+ph.ecog =	ECOG performance score (0=good 5=dead)
+ph.karno =	Karnofsky performance score (bad=0-good=100) rated by physician
+pat.karno =	Karnofsky performance score as rated by patient
+meal.cal =	Calories consumed at meals
+wt.loss =	Weight loss in last six months
+
+Notice in the summary tab that there is some missing data for the bottom row of variables, as indicated by the NA's. If this was in data that we cared about, it would be important to only use the individuals for which we have data; however, since we don't need any of that information, we can continue without worrying about missing data.
+
+First, we'll add a column to the dataset that has the survival time for individuals that have died: 
+
+  dataset$columnName <- with(dataset that the information is coming from, desired information)
+
 ```{r}
-## Add survival object
+# Add survival object column
 lung$SurvObj <- with(lung, Surv(time, status == 2))
 
-## Check data
+# Check data -- scroll to the far right to make sure it's been added
 head(lung)
 ```
 
+The Kaplan-Meier analysis allows us to estimate the population survival over time from a sample, even if patients drop out of the test or are studied for different lengths of time. We'll run this analysis on the data in two ways: first, we'll look at the data as a whole, and second, we'll divide the data by sex.
+
+survfit is a function that creates survival curves from a formula (like Kaplan-Meier):
+
+  object <- survfit(dependent variable ~ independent variable, data = dataset, conf.type = 
+  confidence interval)
+
+km.by.sex, then, is assigned the value of the results of the analysis of sex on survival, using data from the lung dataset, and log-log confidence intervals
 
 ```{r}
-## Kaplan-Meier estimator. The "log-log" confidence interval is preferred.
+# Kaplan-Meier analysis
 km.as.one <- survfit(SurvObj ~ 1, data = lung, conf.type = "log-log")
 km.by.sex <- survfit(SurvObj ~ sex, data = lung, conf.type = "log-log")
 
-## Show object
+# Show object
 km.as.one
-survfit(formula = SurvObj ~ 1, data = lung, conf.type = "log-log")
-
 km.by.sex
-survfit(formula = SurvObj ~ sex, data = lung, conf.type = "log-log")
-
-## See survival estimates at given time (lots of outputs)
-## summary(km.as.one)
-## summary(km.by.sex)
-
-## Plotting without any specification
-plot(km.as.one)
-plot(km.by.sex)
 ```
 
-```{r}
-## Load rms package
-install.packages(rms)
-library(rms)
+Now we can make our plot. GGplot is a good package to use to make plots, but it's also possible to use the base package that comes with R. Since we showed you how to use ggplot above, we'll use the base package now. 
 
-## without specification
-#survplot(km.by.sex)
+The primary black line that appears is the curve, while the two dashed lines are the confidence intervals.
+
+```{r Plot km as one}
+plot(km.as.one, xlab="Days",ylab="Proportion Surviving")
 ```
 
-```{r}
-## Without dots
-survplot(fit  = km.by.sex,
-         conf = c("none","bands","bars")[1],
-         xlab = "", ylab = "Survival",
-         ## xlim(0,100),
-         label.curves = TRUE,                     # label curves directly
-         ## label.curves = list(keys = "lines"),  # legend instead of direct label
-         abbrev.label = FALSE,                    # if label used, abbreviate
-         ## fun = function(x) {1 - x},            # Cumulative probability plot         
-         loglog   = FALSE,                        # log(-log Survival) plot
-         logt     = FALSE,                        # log time
-         time.inc = 100,                          # time increment
-         dots     = FALSE,                         # dot grid
-         n.risk   = TRUE,                         # show number at risk
-         ## srt.n.risk = 0, sep.n.risk = 0.056, adj.n.risk = 1,
-         ## y.n.risk = 0, cex.n.risk = 0.6
-         )
+We can also graph the km.by.sex data, and this plot will need a legend to differentiate between the two curves.
 
-
-#https://rstudio-pubs-static.s3.amazonaws.com/5588_72eb65bfbe0a4cb7b655d2eee0751584.html
+```{r Plot km by sex}
+plot(km.by.sex,col=c('blue','red'),xlab="Days",ylab="Proportion Surviving")
+legend("right",legend = c("Male","Female"), col=c("blue","red"), lty = 1)
+title("Kaplan-Meier Curves \n by Sex") #\n indicates a line break
 ```
 
 
+Adapted from
+https://rstudio-pubs-static.s3.amazonaws.com/5588_72eb65bfbe0a4cb7b655d2eee0751584.html
 
 
--------
 
 
-- upload data from an excel file 
-  - install readxl
+---- Human Demography Project
+
+Sometimes the data does not come from an R package but rather from an Excel file. To load that data into R, we need to instal the readxl package. Then we can create an object (demographyData) in R that has the information from the Excel file. Viewing that object lets us see the dataset.
   
 ```{r Upload Data }
 install.packages("readxl")
@@ -264,8 +273,8 @@ View(demographyData)
 
 ```
 
+In the above survival curve, it looked like males had the steeper curve than females. Let's see if that pattern holds for this data. To do that, we'll need to subset out the data both by year and by sex - for the sake of simplicity, we can just use the pre-1840 data for men and women.
 
-- subset into groups based on year and sex
 
 ```{r Subsets}
 fpre1840 <- subset(demographyData, select = "Pre-1840 Female")
@@ -273,34 +282,36 @@ mpre1840 <- subset(demographyData, select = "Pre-1840 Male")
 
 ```
 
+Then we'll need to calculate the proportion of individuals alive for each age class. Since the data we're given is the number of people that have died for each age class, we'll have to do some math. First, we need to calculate the number of people that are still alive for each age class. Then we'll need to use that information to calculate the proportion of people that are still alive for each age class.
 
-- calculate proportion alive for each age class
-
+Since we'll want to run the same algorithm multiple times, it makes sense to write a couple functions that can do this math for us. 
 
 ```{r Functions}
 
 #function that calculates the number of people still alive
 numStillAlive <- function(subset1) { 
-  totalStartAlive <- sum(subset1)
-  for (i in row(subset1)){
-    sumDead <- sum(subset1[1:i,1])
-    stillAlive <- totalStartAlive - sumDead
-    listStillAlive <- c(listStillAlive,stillAlive)
+  totalStartAlive <- sum(subset1) #find the total number of people alive
+  for (i in row(subset1)){ #for every row (age class)
+    sumDead <- sum(subset1[1:i,1]) #add every row including that one to find the total dead
+    stillAlive <- totalStartAlive - sumDead #subtract total dead from total alive to find still alive
+    listStillAlive <- c(listStillAlive,stillAlive) #make a list of the number of people still alive
   }
   return(listStillAlive)
 }
 
-
+#Function that calculates the proportion of people still alive
 proportionAlive <- function(dataframe) {
-  for (i in col(dataframe)) {
-    a <- dataframe[i]/dataframe[1]
-    list <- c(list,a)
+  for (i in col(dataframe)) { #for every number on the list
+    a <- dataframe[i]/dataframe[1] #divide that that number by the first number to find prop. alive
+    list <- c(list,a) #make a list of the proportion of people alive
   }
   return(list)
 }
 
 
 ```
+
+Then we'll just need to run our data through the functions and use the numbers it produces. We can also add a column indicating the proportion of people still alive to each of our datasets, as well as the values that we'll want on the x axis.
 
 
 ```{r Calculate Proportions}
@@ -312,22 +323,24 @@ fpre1840$xAxis <- 1:20
 mpre1840alive <- as.data.frame(numStillAlive(mpre1840))
 mpre1840prop <- proportionAlive(mpre1840alive)
 mpre1840$PropAlive <- mpre1840prop[2:21]
-mpre1840$xAxis <- ("0-5" "6-10" "11-15" "16-20" "21-25" "26-30" "31-35" "36-40" "41-45" "46-50" "51-55" "56-60" "61-65" "66-70" "71-75""76-80" "81-85" "86-90" "91-95" "96+")
-mpre1840$xAxis <- (0-5 6-10 11-15)
+mpre1840$xAxis <- demographyData$`Age Class`
+
+#mpre1840$xAxis <- ("0-5" "6-10" "11-15" "16-20" "21-25" "26-30" "31-35" "36-40" "41-45" "46-50" "51-55" "56-60" "61-65" "66-70" "71-75""76-80" "81-85" "86-90" "91-95" "96+")
+#mpre1840$xAxis <- (0-5 6-10 11-15)
 
 
 ```
 
-
-- plot survivorship curve
+Then we can use ggplot to plot survivorship curves of the data.
 
 ```{r Plot Survivorship}
 ggplot(fpre1840) +
   aes(x = as.numeric(xAxis), y = as.numeric(PropAlive)) +
   geom_line() +
   theme_cowplot() +
-  xlab("Days with enough sleep to feel rested (last 7 days)") + 
+  xlab("Age Class") + 
   ylab("Survivorship")
+
 
 ```
 
