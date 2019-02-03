@@ -105,7 +105,7 @@ We can also use R to investigate and explore other datasets, as well as answer d
 We can also use R to investigate and explore other datasets, as well as answer different types of questions. For example, we can use R to investigate diversity. One measure of diversity we learn about in 208 is the Shannon Diversity index. Conveniently, there is a package in R (vegan) specifically designed to calculate not only the Shannon Diversity index, but to also investigate other measures of diversity.
 
 
-
+#Part II: Shannon Diversity Index
 ```{r Shannon-diversity index}
 
 #first need to install vegan
