@@ -25,7 +25,7 @@ tail(iris)
 summary(iris)
 ```
 
-Before running any other tests or visual analyses of your data you should generate a hypothesis. In this example we will be testing the hypothesis the longer sepal lengths will generate longer petal lengths. To test this we should first create subsets of the data for each species.
+Before running any other tests or visual analyses of your data you should generate a hypothesis. In this example we will be testing the hypothesis that the longer sepal lengths will generate longer petal lengths. To test this we should first create subsets of the data for each species.
 
 ```{r}
 setosa <- subset(iris,Species == "setosa")
@@ -44,9 +44,11 @@ To look at the distribution of species we will use a bar graph and a table, sinc
 ```{r}
 ggplot(iris) + 
   aes(x=factor(Species)) +
-  geom_bar() +
+  geom_bar(aes(fill=factor(`Species`))) +
   theme_classic() +
-  xlab ("species")
+  xlab ("species") +
+  theme(legend.position="none")
+
 ```
 ```{r}
 table(iris$Species)
@@ -82,7 +84,7 @@ ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+
   labs(color = "Species")
 ```
 
-The following chunk of code is how to test if there is a significant relationship found in non parametric (data that isnt normally distirbuted) data.We will use the subsetted data for this test as we want to test the relationship for each species.
+The following chunk of code is how to test if there is a significant relationship found in non parametric (data that isnt normally distirbuted) data. We will use the subsetted data for this test as we want to test the relationship for each species.
 
 ```{r}
 wilcox.test(setosa$Petal.Length, setosa$Sepal.Length)
