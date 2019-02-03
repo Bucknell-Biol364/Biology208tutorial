@@ -41,7 +41,7 @@ virginica <- subset(iris,Species == "virginica")
 
 Next, since these variables are quantitative, you want to run the simple.eda function on each variable from the main data set not the subsets. This function will display a histogram, boxplot, and QQ plot for each subset. If the points follow the diagonal line in the QQ plot, then the data is normally distributed.
 
-```{r}
+```{r simple.eda}
 simple.eda(iris$Sepal.Length)
 simple.eda(iris$Petal.Length)
 ```
@@ -51,10 +51,9 @@ To look at the distribution of species we will use a bar graph and a table, sinc
 ```{r bar graph}
 ggplot(iris) + 
   aes(x=factor(Species)) +
-  geom_bar(aes(fill=factor(Species))) +
+  geom_bar() +
   theme_classic() +
-  xlab ("species") +
-  theme(legend.position="none")
+  xlab ("species")
 ```
 ```{r}
 table(iris$Species)
@@ -105,7 +104,7 @@ We can also use R to investigate and explore other datasets, as well as answer d
 We can also use R to investigate and explore other datasets, as well as answer different types of questions. For example, we can use R to investigate diversity. One measure of diversity we learn about in 208 is the Shannon Diversity index. Conveniently, there is a package in R (vegan) specifically designed to calculate not only the Shannon Diversity index, but to also investigate other measures of diversity.
 
 
-#Part II: Shannon Diversity Index
+#Part 2: Shannon Diversity Index
 ```{r Shannon-diversity index}
 
 #first need to install vegan
@@ -168,7 +167,7 @@ plot(species_accumulation, ci.type="poly", col="blue", lwd=3, ci.lty=0, ci.col="
 
   
 ---------- KE
-
+#Part 3: Survivorship Curves
 ```{r}
 ## Load survival package
 library(survival)
