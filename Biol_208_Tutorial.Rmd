@@ -51,10 +51,9 @@ To look at the distribution of species we will use a bar graph and a table, sinc
 ```{r bar graph}
 ggplot(iris) + 
   aes(x=factor(Species)) +
-  geom_bar(aes(fill=factor(Species))) +
+  geom_bar() +
   theme_classic() +
-  xlab ("species") +
-  theme(legend.position="none")
+  xlab ("species")
 ```
 ```{r}
 table(iris$Species)
