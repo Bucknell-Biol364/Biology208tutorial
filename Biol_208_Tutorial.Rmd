@@ -41,7 +41,7 @@ virginica <- subset(iris,Species == "virginica")
 
 Next, since these variables are quantitative, you want to run the simple.eda function on each variable from the main data set not the subsets. This function will display a histogram, boxplot, and QQ plot for each subset. If the points follow the diagonal line in the QQ plot, then the data is normally distributed.
 
-```{r}
+```{r simple.eda}
 simple.eda(iris$Sepal.Length)
 simple.eda(iris$Petal.Length)
 ```
