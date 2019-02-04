@@ -13,7 +13,7 @@ We will be providing a walkthrough of general R skills including: package loadin
 
 
 #Part 1: R Review
-In this part, we will cover how to install data visualization packages and use those to analyze data to test hypotheses.
+In this part, we will cover how to install data visualization packages and use those to analyze data to test hypotheses. If you have done a tutorial of R in your previous core courses, this should be mainly review. 
 
 We will be using ggplot2 and UsingR, and we can install both using this chunk of code. The install.packages function installs the package and the library function makes sure the package is "turned on" once you have it in R.
 ```{r}
@@ -21,7 +21,7 @@ if (!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
 if (!require("UsingR")) install.packages("UsingR"); library(UsingR)
 ```
 
-Datasets shows your entire data table. Head shows the first five lines and tail shows the last five lines. Running both are useful to make sure your data is complete and each column has the same number of rows. Summary will provide the five number summary for each variable in the data set and will let you know if there is any missing data ("NA"s).
+Datasets allows us to access the datasets already available in R. Head shows the first several lines and tail shows the last several lines. Running both are useful to begin to investigate your data, confirm the dataset is complete, and check that each column has the same number of rows. Summary will provide the five number summary for each variable in the data set and will let you know if there is any missing data ("NA"s).
 
 ```{r setup, include=TRUE}
 library(ggplot2)
@@ -31,7 +31,7 @@ tail(iris)
 summary(iris)
 ```
 
-Before running any other tests or visual analyses of your data, you should generate a hypothesis. In this example we will be testing the hypothesis the longer sepal lengths will generate longer petal lengths. Since the species of each flower could have an effect on petal and sepal length, we will want to look at the relationship between these variables for each species individually. To do this, we will want to split the data up by species, which we can do by creating a subset for each one. 
+Before running any other tests or visual analyses of your data, you should generate a hypothesis. In this example we will be testing the hypothesis that longer sepal lengths are correlated with longer petal lengths. Since the species of each flower could have an effect on petal and sepal length, we will want to look at the relationship between these variables for each species individually. To do this, we will want to split the data up by species, which we can do by creating a subset for each one. 
 
 ```{r Subset}
 setosa <- subset(iris,Species == "setosa")
@@ -39,21 +39,25 @@ versicolor <- subset(iris,Species == "versicolor")
 virginica <- subset(iris,Species == "virginica")
 ```
 
-Next, since these variables are quantitative, you want to run the simple.eda function on each variable from the main data set not the subsets. This function will display a histogram, boxplot, and QQ plot for each subset. If the data is normally distributed, then it is possible to use parametric tests to test the hypotheses - on a histogram, this looks like a curve where the middle is the highest and the two sides fall away evenly. If the points follow the diagonal line in the QQ plot, then the data is normally distributed.
+Next, since these variables are quantitative, you want to run the simple.eda function on each variable from the main data set not the subsets, to determine if your data is normally distributed. This function will display a histogram, boxplot, and QQ plot for each subset. If the data is normally distributed, then it is possible to use parametric tests to test the hypotheses - on a histogram, this looks like a curve where the middle is the highest and the two sides fall away evenly. If the points follow the diagonal line in the QQ plot, then the data is most likely normally distributed.
 
 ```{r simple.eda}
 simple.eda(iris$Sepal.Length)
 simple.eda(iris$Petal.Length)
 ```
 
-To look at the distribution of species we will use a bar graph and a table, since this is a categorical variable. 
+To look at the distribution of species we will use a bar graph and a table since this is a categorical variable. 
 
 ```{r bar graph}
 ggplot(iris) + 
-  aes(x=factor(Species)) +
+  aes(x=factor(Species), fill=Species) +
   geom_bar() +
   theme_classic() +
-  xlab ("species")
+  xlab ("Species of Iris") +
+  ylab("Count") +
+  theme(legend.position = "false") +
+  scale_fill_hue(c = 50, l = 70, h=c(90, -30))
+  
 ```
 ```{r}
 table(iris$Species)
@@ -78,17 +82,18 @@ shapiro.test(log10(iris$Sepal.Length))
 shapiro.test(log10(iris$Petal.Length))
 ```
 
-Since in the end petal length was not normally distributed, we will create a scatterplot to help us visualize the data. 
+Since petal length was not normally distributed, we will create a scatterplot to help us visualize the data. 
 
 ```{r}
 ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+
   geom_point(aes(colour = factor(Species)), shape =1, size=3)+
   theme_classic() +
-  geom_smooth(method=lm, color="blue", se=TRUE)+
+  geom_smooth(method=lm, color="blue", se=TRUE) +
   xlab("Sepal Length")+
   ylab("Petal Length")+
   ylim(0,8)+
-  labs(color = "Species")
+  labs(color = "Species of Iris") +
+  scale_color_hue(l = 90, c = 200)
 ```
 
 However, to determine if there is a signifcant effect we will have to run a non-parametric test. A mann whitney u test, which is run using the following chunk of code, will work here. 
@@ -106,7 +111,7 @@ Since all three p-values are less than 0.05, sepal length affects petal length f
 #Part 2: Shannon Diversity Index
 We can also use R to investigate and explore other datasets, as well as answer different types of questions. For example, we can use R to investigate species diversity. One measure of diversity we learn about in 208 is the Shannon Diversity index. Conveniently, there is a package in R (vegan) specifically designed to calculate not only the Shannon Diversity index, but to also investigate other measures of diversity.
 
-```{r Shannon-diversity index}
+```{r Preliminary Steps of Data Preparation}
 
 #first need to install vegan
 
@@ -116,6 +121,8 @@ library(vegan)
 #Using a preloaded dataset BCI
 data("BCI")
 
+#learn more about this specific dataset by going to the console and typing "??BCI"
+
 #look at BCI dataset
 BCI
 
@@ -124,6 +131,12 @@ ncol(BCI)
 colnames(BCI)
 nrow(BCI)
 rownames(BCI)
+
+```
+
+After learning more about the dataset we can now use vegan to run a Shannon-diversity index to determine how diverse the Barro Colorado Island plots are!
+
+```{r Shannon-diversity index}
 
 #Two different ways to get shannon-diversity index for each site
 diversity(BCI)
@@ -136,7 +149,7 @@ diversity_dataset
 qqnorm(diversity_dataset)
 qqline(diversity_dataset)
 
-#using a histogram to look at data
+#using a histogram to visualize data
 hist(diversity_dataset)
 
 #investigate diversity_dataset
@@ -149,26 +162,30 @@ median(diversity_dataset)
 #getting the average diversity
 mean(diversity_dataset)
 
-#Creating a species accumulation curve. Species accumulation curves allow us to visualize how many species are present for a certain number of sites. Among other functions, it allows us to determine if species count is increasing with sampling effort (number of sites).
+```
+
+Another way to visualize this data dataset is by creating a species accumulation curve.  
+
+```{r Species Accumulation Curve}
+#Species accumulation curves allow us to visualize how many species are present for a certain number of sites. Among other functions, it allows us to determine if species count is increasing with sampling effort (number of sites).
 species_accumulation <- specaccum(BCI)
 
 #Plotting a basic species accumulation curve
 plot(species_accumulation) 
 
-#We can edit this graph to better visualize the data, and to be more visually appealing 
-#Aesthetics include:
+#We can edit this graph to better visualize the data, and to be more visually appealing. The aesthetic options in this basic R function, plot(), vary slightly than the ones you have become familiar with in ggplot2 so we have included a list of the new options below.
+
 #ci.type = bar, line, or polygon; Type of confidence interval drawn on the figure. 
 #col=""; color of species accumulation line
 #lwd= ; width of line
 #ci.lty= 0,1,2,3... ; Type of border on confidence polygon or confidence lines
 #ci.col=""; color for confidence line or polygon
-#ylab= "" ; this allows us to edit the label on the y axis
 plot(species_accumulation, ci.type="poly", col="blue", lwd=3, ci.lty=0, ci.col="orange", ylab ="Species Accumulation") 
 ```
 
 
 #Part 3: Survivorship Curves
-Survivorship curves indicate the proportion of a population that is still alive after a certain period of time. Raw data is usually collected as the age of the individuals when they die, and you can make a curve by plotting the proportion of individuals still alive at a given age.
+Survivorship curves indicate the proportion of a population that is still alive after a certain period of time. Raw data is usually collected as the age of the individuals when they die. You can then make a curve by plotting the proportion of individuals still alive at a given age.
 
 The survival package in R has some useful datasets that can be used to practice making a survival curve. First, we can load the package and then pick the specific dataset, lung, to use for this example. Again, we can use head, tail, and summary to get a sense of the data.
 
@@ -348,15 +365,19 @@ ggplot(mpre1840) +
 ```
 
 
-Trouble shooting:
-1.) package loading
-2.) syntax importance
-3.) 
+#Trouble shooting
+1.) It is essential you load packages prior to using the functions contained within them. Error messages that report "object" or "function" not found can often be traced back to improper loading of packages or not running the necessary steps beforehand (check your 'Environment' to be sure all datasets and variables are loaded). 
+2.) Syntax is especially important while coding in R. If not all of your graph changes are being incorporated be sure you have included "+" for each new line addition. Also be sure to close all parenthetical expressions properly. If your error reports an unexpected symbol, you may want to start by checking to make sure you have enough parenthesis included. 
+3.) Use the R help section to learn what each function does, and how to set it up properly. You should also confirm your data conforms to the proper structure needed for that function. 
 
-Other resources:
-For more guidance in using R, there are many resources available on the internet, such as Stack Overflow. We will first refer you to the other tutorials you may or may not have taken in your previous core biology courses (205-207) as they lead up to the skills and ideas used in this tutorial. 
+#Other resources
+For more guidance in using R, there are many resources available on the internet, such as Stack Overflow. However, we will first refer you to the other tutorials you may or may not have taken in your previous core biology courses (205-207) as they lead up to the skills and ideas used in this tutorial. 
 
-Acknowledgments:
-We would like to acknowledge the use of several resources cited throughout this tutorial and stack overflow for aiding us. Additionally, we would like to reference the tutorials for the 205-207 courses that we referenced to determine what skill and experience level we should be aiming for. 
+#Acknowledgments
+We would like to acknowledge the use of several resources cited throughout this tutorial and stack overflow for aiding us. Additionally, we would like to reference the tutorials for the 205-207 courses that we referenced to determine what skill and experience level we should be aiming for. We divided the work put into this tutorial amongst group members as follows:
+Justin: R Basics/Review
+Megan: Shannon Diversity & scatterplot used in Part I
+Katie: Survivorship Curves
+We all contributed notes throughout our own sections, and contributed thoughtfully to how the tutorial was structured in terms of complexity and subject material. 
 
 
