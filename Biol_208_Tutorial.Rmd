@@ -15,7 +15,7 @@ We will be providing a walkthrough of general R skills including: package loadin
 #Part 1: R Review
 In this part, we will cover how to install data visualization packages and use those to analyze data to test hypotheses. If you have done a tutorial of R in your previous core courses, this should be mainly review. 
 
-We will be using ggplot2 and UsingR, and we can install both using this chunk of code. The install.packages function installs the package and the library function makes sure the package is "turned on" once you have it in R.
+We will be using ggplot2 and UsingR, and we can install both using this chunk of code. The install.packages function installs the package and the library function makes sure the package is "turned on" once you have it in R. The helpful bit of code at the beginning before install.packages will check your library and only install the package if it does not find it already installed.
 ```{r}
 if (!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
 if (!require("UsingR")) install.packages("UsingR"); library(UsingR)
@@ -66,14 +66,14 @@ table(iris$Species)
 
 You can also use pie charts to display categorical data. However, because it's hard to usefully distinguish between the sizes of each wedge of the pie, they are usually not used. Bar graphs and tables are much more useful in displaying the distribution of a categorical variable.
 
-You can also run a shapiro test for each variable to determine if that variable is actually normally distributed since it is sometimes hard to tell from the QQ plots.
+Since it is hard to accurately determine sometimes if a data set is normally distributed by looking at the histogram and QQ plot we will run a shapiro test to test the null hypothesis that the data is normally distributed. 
 
 ```{r}
 shapiro.test(iris$Sepal.Length)
 shapiro.test(iris$Petal.Length)
 ```
 
-Since both p-values are less than 0.05, we reject the null hypothesis that the data is normally distributed, so we have to transform the data.
+Since both p-values are less than 0.05, we reject the null hypothesis that the data is normally distributed. Since we reject the null hypothesis you can transform the data using log10 (using the function log actually runs the natural log) to try and have your data be normally distributed.
 
 ```{r}
 simple.eda(log10(iris$Sepal.Length))
@@ -82,13 +82,13 @@ shapiro.test(log10(iris$Sepal.Length))
 shapiro.test(log10(iris$Petal.Length))
 ```
 
-Since petal length was not normally distributed, we will create a scatterplot to help us visualize the data. 
+Since petal length was not normally distributed after transforming the data, we will create a scatterplot only to help us visualize the data and not to test the relationship. One thing to note is that since the data is not normally distributed we set standard error to false so that it does not display the standard error bars around the line. If the data had been normally distributted you would set se= TRUE to include it.
 
 ```{r}
 ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+
   geom_point(aes(colour = factor(Species)), shape =1, size=3)+
   theme_classic() +
-  geom_smooth(method=lm, color="blue", se=TRUE) +
+  geom_smooth(method=lm, color="blue", se=FALSE) +
   xlab("Sepal Length")+
   ylab("Petal Length")+
   ylim(0,8)+
@@ -96,7 +96,7 @@ ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+
   scale_color_hue(l = 90, c = 200)
 ```
 
-However, to determine if there is a signifcant effect we will have to run a non-parametric test. A mann whitney u test, which is run using the following chunk of code, will work here. 
+However, to determine if there is a signifcant relationship between the two variables we will have to run a non-parametric test. A mann whitney u test, which is run using the following chunk of code, will work here. 
 
 ```{r}
 wilcox.test(setosa$Petal.Length, setosa$Sepal.Length)
@@ -104,7 +104,7 @@ wilcox.test(versicolor$Petal.Length, versicolor$Sepal.Length)
 wilcox.test(virginica$Petal.Length, virginica$Sepal.Length)
 ```
 
-Since all three p-values are less than 0.05, sepal length affects petal length for each species. There were other variables in the data set for Iris. Pick different variables, create your own hypothesis, and explore and test the significance of the data.
+Since all three p-values are less than 0.05, we reject the null hypothesis. We have sufficient evidence that sepal length affects petal length for each species. There were other variables in the data set for Iris. Pick different variables, create your own hypothesis, and explore and test the significance of the data.
 
 
 
@@ -367,8 +367,9 @@ ggplot(mpre1840) +
 
 #Trouble shooting
 1.) It is essential you load packages prior to using the functions contained within them. Error messages that report "object" or "function" not found can often be traced back to improper loading of packages or not running the necessary steps beforehand (check your 'Environment' to be sure all datasets and variables are loaded). 
-2.) Syntax is especially important while coding in R. If not all of your graph changes are being incorporated be sure you have included "+" for each new line addition. Also be sure to close all parenthetical expressions properly. If your error reports an unexpected symbol, you may want to start by checking to make sure you have enough parenthesis included. 
+2.) Syntax is especially important while coding in R. If not all of your graph changes are being incorporated be sure you have included "+" for each new line addition. Also be sure to close all parenthetical expressions properly. If your error reports an unexpected symbol, you may want to start by checking to make sure you have enough parenthesis included.
 3.) Use the R help section to learn what each function does, and how to set it up properly. You should also confirm your data conforms to the proper structure needed for that function. 
+4.) A very important thing to note is that it is very important to know what your null hypothesis is when running a test. R is a very powerful program that lets you run many different statistical tests however it is not very intuitive. Generally in stats, when you get a p-value of 0.05 that means the relationship you are testing is significant so intuitively when you run the shapiro test an easy mistake to make is that a p value of 0.05 means that your data is normally distributed. However, here the null hypothesis is that your data is normally distributed, which means that rejecting the null hypothesis here (p value < 0.05) means the data is NOT normally distributed.
 
 #Other resources
 For more guidance in using R, there are many resources available on the internet, such as Stack Overflow. However, we will first refer you to the other tutorials you may or may not have taken in your previous core biology courses (205-207) as they lead up to the skills and ideas used in this tutorial. 
@@ -378,6 +379,6 @@ We would like to acknowledge the use of several resources cited throughout this 
 Justin: R Basics/Review
 Megan: Shannon Diversity & scatterplot used in Part I
 Katie: Survivorship Curves
-We all contributed notes throughout our own sections, and contributed thoughtfully to how the tutorial was structured in terms of complexity and subject material. 
+We all contributed notes throughout our own sections, and contributed thoughtfully to how the tutorial was structured in terms of complexity and subject material. We also all looked over each others sections to make sure the tutorial was succint and built well off of previous sections.
 
 
