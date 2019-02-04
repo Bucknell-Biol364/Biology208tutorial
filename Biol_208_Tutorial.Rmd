@@ -31,7 +31,7 @@ tail(iris)
 summary(iris)
 ```
 
-Before running any other tests or visual analyses of your data, you should generate a hypothesis. In this example we will be testing the hypothesis the longer sepal lengths will generate longer petal lengths. To test this we should first create subsets of the data for each species.
+Before running any other tests or visual analyses of your data, you should generate a hypothesis. In this example we will be testing the hypothesis the longer sepal lengths will generate longer petal lengths. Since the species of each flower could have an effect on petal and sepal length, we will want to look at the relationship between these variables for each species individually. To do this, we will want to split the data up by species, which we can do by creating a subset for each one. 
 
 ```{r Subset}
 setosa <- subset(iris,Species == "setosa")
@@ -39,7 +39,7 @@ versicolor <- subset(iris,Species == "versicolor")
 virginica <- subset(iris,Species == "virginica")
 ```
 
-Next, since these variables are quantitative, you want to run the simple.eda function on each variable from the main data set not the subsets. This function will display a histogram, boxplot, and QQ plot for each subset. If the data is normally distributed, then it is possible to use parametric tests to test the hypotheses - on a historgram, this looks like a curve where the middle is the highest and the two sides fall away evenly. If the points follow the diagonal line in the QQ plot, then the data is normally distributed.
+Next, since these variables are quantitative, you want to run the simple.eda function on each variable from the main data set not the subsets. This function will display a histogram, boxplot, and QQ plot for each subset. If the data is normally distributed, then it is possible to use parametric tests to test the hypotheses - on a histogram, this looks like a curve where the middle is the highest and the two sides fall away evenly. If the points follow the diagonal line in the QQ plot, then the data is normally distributed.
 
 ```{r simple.eda}
 simple.eda(iris$Sepal.Length)
@@ -91,7 +91,7 @@ ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+
   labs(color = "Species")
 ```
 
-However, to determine if there is a signifcant effect we will have to run a non-parametric test. A mann whitney u test, which is run using the following chunk of code, will work here. Since the species of each flower could have an effect on petal and sepal length, we will want to look at the relationship between these variables for each species individually. To do this, we will want to split the data up by species, which we can do by creating a subset for each one. 
+However, to determine if there is a signifcant effect we will have to run a non-parametric test. A mann whitney u test, which is run using the following chunk of code, will work here. 
 
 ```{r}
 wilcox.test(setosa$Petal.Length, setosa$Sepal.Length)
@@ -173,7 +173,7 @@ Survivorship curves indicate the proportion of a population that is still alive 
 The survival package in R has some useful datasets that can be used to practice making a survival curve. First, we can load the package and then pick the specific dataset, lung, to use for this example. Again, we can use head, tail, and summary to get a sense of the data.
 
 ```{r Survival Package and Lung Data}
-# Load the survival package
+# Load survival
 library(survival)
 
 # See the datasets in the survival package
@@ -323,11 +323,9 @@ fpre1840$xAxis <- 1:20
 mpre1840alive <- as.data.frame(numStillAlive(mpre1840))
 mpre1840prop <- proportionAlive(mpre1840alive)
 mpre1840$PropAlive <- mpre1840prop[2:21]
-mpre1840$xAxis <- demographyData$`Age Class`
+mpre1840$xAxis <- 1:20
 
 #mpre1840$xAxis <- ("0-5" "6-10" "11-15" "16-20" "21-25" "26-30" "31-35" "36-40" "41-45" "46-50" "51-55" "56-60" "61-65" "66-70" "71-75""76-80" "81-85" "86-90" "91-95" "96+")
-#mpre1840$xAxis <- (0-5 6-10 11-15)
-
 
 ```
 
@@ -341,7 +339,12 @@ ggplot(fpre1840) +
   xlab("Age Class") + 
   ylab("Survivorship")
 
-
+ggplot(mpre1840) +
+  aes(x = as.numeric(xAxis), y = as.numeric(PropAlive)) +
+  geom_line() +
+  theme_cowplot() +
+  xlab("Age Class") + 
+  ylab("Survivorship")
 ```
 
 
@@ -351,7 +354,7 @@ Trouble shooting:
 3.) 
 
 Other resources:
-For more guidance in using R, there are many resources available on the internet. We will first refer you to the other tutorials you may or may not have taken in your previous core biology courses (205-207) as they lead up to the skills and ideas used in this tutorial. 
+For more guidance in using R, there are many resources available on the internet, such as Stack Overflow. We will first refer you to the other tutorials you may or may not have taken in your previous core biology courses (205-207) as they lead up to the skills and ideas used in this tutorial. 
 
 Acknowledgments:
 We would like to acknowledge the use of several resources cited throughout this tutorial and stack overflow for aiding us. Additionally, we would like to reference the tutorials for the 205-207 courses that we referenced to determine what skill and experience level we should be aiming for. 
