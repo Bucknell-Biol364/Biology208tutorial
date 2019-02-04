@@ -99,12 +99,12 @@ wilcox.test(versicolor$Petal.Length, versicolor$Sepal.Length)
 wilcox.test(virginica$Petal.Length, virginica$Sepal.Length)
 ```
 
-Since all three p-values are less than 0.05, sepal length affects petal length for each species. There were other variables in the data set for Iris. Pick different variables, create your own hypothesis, and explore and test the significane of the data.
+Since all three p-values are less than 0.05, sepal length affects petal length for each species. There were other variables in the data set for Iris. Pick different variables, create your own hypothesis, and explore and test the significance of the data.
 
 
 
 #Part 2: Shannon Diversity Index
-We can also use R to investigate and explore other datasets, as well as answer different types of questions. For example, we can use R to investigate diversity. One measure of diversity we learn about in 208 is the Shannon Diversity index. Conveniently, there is a package in R (vegan) specifically designed to calculate not only the Shannon Diversity index, but to also investigate other measures of diversity.
+We can also use R to investigate and explore other datasets, as well as answer different types of questions. For example, we can use R to investigate species diversity. One measure of diversity we learn about in 208 is the Shannon Diversity index. Conveniently, there is a package in R (vegan) specifically designed to calculate not only the Shannon Diversity index, but to also investigate other measures of diversity.
 
 ```{r Shannon-diversity index}
 
@@ -155,7 +155,7 @@ species_accumulation <- specaccum(BCI)
 #Plotting a basic species accumulation curve
 plot(species_accumulation) 
 
-#We can edit this graph to better visualize the data, and to be generally more visually appealing 
+#We can edit this graph to better visualize the data, and to be more visually appealing 
 #Aesthetics include:
 #ci.type = bar, line, or polygon; Type of confidence interval drawn on the figure. 
 #col=""; color of species accumulation line
@@ -259,7 +259,7 @@ https://rstudio-pubs-static.s3.amazonaws.com/5588_72eb65bfbe0a4cb7b655d2eee07515
 
 ---- Human Demography Project
 
-Sometimes the data does not come from an R package but rather from an Excel file. To load that data into R, we need to instal the readxl package. Then we can create an object (demographyData) in R that has the information from the Excel file. Viewing that object lets us see the dataset.
+Sometimes the data does not come from an R package but rather from an Excel file. To load that data into R, we need to install the readxl package. Then we can create an object (demographyData) in R that has the information from the Excel file. Viewing that object lets us see the dataset.
   
 ```{r Upload Data }
 install.packages("readxl")
@@ -273,7 +273,7 @@ View(demographyData)
 
 ```
 
-In the above survival curve, it looked like males had the steeper curve than females. Let's see if that pattern holds for this data. To do that, we'll need to subset out the data both by year and by sex - for the sake of simplicity, we can just use the pre-1840 data for men and women.
+In the above survival curve, it looked like males had a steeper curve than females. Let's see if that pattern holds for this data. To do that, we'll need to subset out the data both by year and by sex - for the sake of simplicity, we can just use the pre-1840 data for men and women.
 
 
 ```{r Subsets}
@@ -331,7 +331,7 @@ mpre1840$xAxis <- demographyData$`Age Class`
 
 ```
 
-Then we can use ggplot to plot survivorship curves of the data.
+Then we can use ggplot2 to plot survivorship curves of the data.
 
 ```{r Plot Survivorship}
 ggplot(fpre1840) +
@@ -346,5 +346,14 @@ ggplot(fpre1840) +
 
 
 Trouble shooting:
-1.) 
+1.) package loading
+2.) syntax importance
+3.) 
+
+Other resources:
+For more guidance in using R, there are many resources available on the internet. We will first refer you to the other tutorials you may or may not have taken in your previous core biology courses (205-207) as they lead up to the skills and ideas used in this tutorial. 
+
+Acknowledgments:
+We would like to acknowledge the use of several resources cited throughout this tutorial and stack overflow for aiding us. Additionally, we would like to reference the tutorials for the 205-207 courses that we referenced to determine what skill and experience level we should be aiming for. 
+
 
