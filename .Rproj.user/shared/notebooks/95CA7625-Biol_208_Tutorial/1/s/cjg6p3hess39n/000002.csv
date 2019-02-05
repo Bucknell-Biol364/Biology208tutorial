@@ -1,0 +1,24 @@
+"0","## Load rms package"
+"0","install.packages(rms)"
+"1","Error in "
+"1","install.packages"
+"1"," : "
+"1","object 'rms' not found"
+"1","
+"
+"0","library(rms)"
+"2","package ‘rms’ was built under R version 3.5.2"
+"2","Loading required package: SparseM
+"
+"2","
+Attaching package: ‘SparseM’
+
+"
+"2","The following object is masked from ‘package:base’:
+
+    backsolve
+
+"
+"2","Error: package or namespace load failed for ‘rms’:
+ object 'plotp' not found whilst loading namespace 'rms'
+"

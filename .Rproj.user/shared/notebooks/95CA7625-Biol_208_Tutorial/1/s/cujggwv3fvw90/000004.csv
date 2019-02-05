@@ -1,0 +1,5 @@
+"0","ggplot(iris) + "
+"0","  aes(x=factor(Species)) +"
+"0","  geom_bar() +"
+"0","  theme_classic() +"
+"0","  xlab (""species"")"

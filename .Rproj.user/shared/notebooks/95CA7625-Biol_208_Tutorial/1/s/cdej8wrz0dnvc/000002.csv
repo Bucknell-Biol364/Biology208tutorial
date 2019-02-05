@@ -1,0 +1,8 @@
+"0","ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+"
+"0","  geom_point(aes(colour = factor(Species)), shape =1, size=3)+"
+"0","  theme_classic() +"
+"0","  geom_smooth(method=lm, color=""blue"", se=TRUE)+"
+"0","  xlab(""Sepal Length"")+"
+"0","  ylab(""Petal Length"")+"
+"0","  ylim(0,8)+"
+"0","  labs(color = ""Species"")"

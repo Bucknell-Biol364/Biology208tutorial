@@ -1,0 +1,9 @@
+"0","## Load rms package
+install.packages(rms)
+"
+"1","Error in "
+"1","install.packages"
+"1"," : "
+"1","object 'rms' not found"
+"1","
+"
