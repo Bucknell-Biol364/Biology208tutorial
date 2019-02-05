@@ -59,6 +59,8 @@ ggplot(iris) +
   scale_fill_hue(c = 50, l = 70, h=c(90, -30))
   
 ```
+
+
 ```{r}
 table(iris$Species)
 ```
@@ -113,10 +115,8 @@ We can also use R to investigate and explore other datasets, as well as answer d
 
 ```{r Preliminary Steps of Data Preparation}
 
-#first need to install vegan
-
-#load vegan 
-library(vegan)
+#first need to install and load vegan 
+if (!require("vegan")) install.packages("vegan"); library(vegan)
 
 #Using a preloaded dataset BCI
 data("BCI")
