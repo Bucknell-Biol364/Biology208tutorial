@@ -26,7 +26,6 @@ if (!require("UsingR")) install.packages("UsingR"); library(UsingR)
 Datasets allows us to access the datasets already available in R. Head shows the first several lines and tail shows the last several lines. Running both are useful to begin to investigate your data, confirm the dataset is complete, and check that each column has the same number of rows. Summary will provide the five number summary for each variable in the data set and will let you know if there is any missing data ("NA"s).
 
 ```{r setup, include=TRUE}
-library(ggplot2)
 datasets::iris
 head(iris)
 tail(iris)
