@@ -2,7 +2,9 @@
 title: "208_Tutorial"
 author: "Megan, Justin, Katie E"
 date: "1/29/2019"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 Welcome to R coding in 208!
