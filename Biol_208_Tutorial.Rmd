@@ -184,9 +184,25 @@ plot(species_accumulation)
 plot(species_accumulation, ci.type="poly", col="blue", lwd=3, ci.lty=0, ci.col="orange", ylab ="Species Accumulation") 
 ```
 
+Now it's your turn to further investigate this dataset (BCI). Your goals are to subset the dataframe, and then to come up with a hypothesis that you can test using the skills from Part I and Part II of this tutorial. 
+
+##Question, Hypothesis, Prediction
+What are you aiming to investigate? Practice your QHP skills:
+
+##What subset of the data are you going to look into
+
+
+##Testing normality of data
+
+
+##Data visualization
+
+
+##Statistical Tests
+
 
 #Part 3: Survivorship Curves
-Survivorship curves indicate the proportion of a population that is still alive after a certain period of time. Raw data is usually collected as the age of the individuals when they die. You can then make a curve by plotting the proportion of individuals still alive at a given age.
+Another topic covered during some years of 208 is mortality and survivorship. Survivorship curves indicate the proportion of a population that is still alive after a certain period of time. Raw data is usually collected as the age of the individuals when they die. You can then make a curve by plotting the proportion of individuals still alive at a given age. This allows you to compare the survivorship of different populations or of one population over time. 
 
 The survival package in R has some useful datasets that can be used to practice making a survival curve. First, we can load the package and then pick the specific dataset, lung, to use for this example. Again, we can use head, tail, and summary to get a sense of the data.
 
@@ -381,5 +397,10 @@ Justin: R Basics/Review
 Megan: Shannon Diversity & scatterplot used in Part I
 Katie: Survivorship Curves
 We all contributed notes throughout our own sections, and contributed thoughtfully to how the tutorial was structured in terms of complexity and subject material. We also all looked over each others sections to make sure the tutorial was succint and built well off of previous sections.
+
+We would also like to acknowledge the use of google, and stack overflow. The following websites/blogs/tutorials were also used:
+http://www.flutterbys.com.au/stats/tut/tut13.2.html
+
+
 
 
