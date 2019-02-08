@@ -1,4 +1,4 @@
-# Biology 208 tutorial
+# Biology 208 R Tutorial
 
 ## Introduction
 Using R is an important skill that Bucknell biology professors are beginning to incorporate in their courses. While typically touted as a "better way to make graphs," there are many benefits to learning R. This includes better dataset preparation and manipulation, data analyses for different types of data, and better data visualization.
