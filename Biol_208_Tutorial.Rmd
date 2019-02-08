@@ -18,10 +18,12 @@ We will be providing a walkthrough of general R skills including: package loadin
 In this part, we will cover how to install data visualization packages and use those to analyze data to test hypotheses. If you have done a tutorial of R in your previous core courses, this should be mainly review. 
 
 We will be using ggplot2 and UsingR, and we can install both using this chunk of code. The install.packages function installs the package and the library function makes sure the package is "turned on" once you have it in R. The helpful bit of code at the beginning before install.packages will check your library and only install the package if it does not find it already installed.
+
 ```{r}
 if (!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
 if (!require("UsingR")) install.packages("UsingR"); library(UsingR)
 ```
+
 
 Datasets allows us to access the datasets already available in R. Head shows the first several lines and tail shows the last several lines. Running both are useful to begin to investigate your data, confirm the dataset is complete, and check that each column has the same number of rows. Summary will provide the five number summary for each variable in the data set and will let you know if there is any missing data ("NA"s).
 
@@ -32,6 +34,7 @@ tail(iris)
 summary(iris)
 ```
 
+
 Before running any other tests or visual analyses of your data, you should generate a hypothesis. In this example we will be testing the hypothesis that longer sepal lengths are correlated with longer petal lengths. Since the species of each flower could have an effect on petal and sepal length, we will want to look at the relationship between these variables for each species individually. To do this, we will want to split the data up by species, which we can do by creating a subset for each one. 
 
 ```{r Subset}
@@ -40,12 +43,14 @@ versicolor <- subset(iris,Species == "versicolor")
 virginica <- subset(iris,Species == "virginica")
 ```
 
+
 Next, since these variables are quantitative, you want to run the simple.eda function on each variable from the main data set not the subsets, to determine if your data is normally distributed. This function will display a histogram, boxplot, and QQ plot for each subset. If the data is normally distributed, then it is possible to use parametric tests to test the hypotheses - on a histogram, this looks like a curve where the middle is the highest and the two sides fall away evenly. If the points follow the diagonal line in the QQ plot, then the data is most likely normally distributed.
 
 ```{r simple.eda}
 simple.eda(iris$Sepal.Length)
 simple.eda(iris$Petal.Length)
 ```
+
 
 To look at the distribution of species we will use a bar graph and a table since this is a categorical variable. 
 
@@ -61,6 +66,7 @@ ggplot(iris) +
   
 ```
 
+This will allow us to visualize the data in table form. 
 
 ```{r}
 table(iris$Species)
@@ -110,7 +116,6 @@ wilcox.test(virginica$Petal.Length, virginica$Sepal.Length)
 Since all three p-values are less than 0.05, we reject the null hypothesis. We have sufficient evidence that sepal length affects petal length for each species. There were other variables in the data set for Iris. Pick different variables, create your own hypothesis, and explore and test the significance of the data.
 
 
-
 #Part 2: Shannon Diversity Index
 We can also use R to investigate and explore other datasets, as well as answer different types of questions. For example, we can use R to investigate species diversity. One measure of diversity we learn about in 208 is the Shannon Diversity index. Conveniently, there is a package in R (vegan) specifically designed to calculate not only the Shannon Diversity index, but to also investigate other measures of diversity.
 
@@ -154,8 +159,10 @@ qqline(diversity_dataset)
 hist(diversity_dataset)
 
 #investigate diversity_dataset
-plot(diversity_dataset)
+plot(diversity_dataset, col = "darkslategray3", lwd = 3)
+
 summary(diversity_dataset)
+ggplot(BCI)
 
 #getting the median diversity
 median(diversity_dataset)
@@ -165,13 +172,24 @@ mean(diversity_dataset)
 
 ```
 
+While these plots, and numbers help us get a better grasp of what the data looks like- it isn't the most useful for this dataset. If we are specifically interested in diversity we have to truly consider our axes and what we want our figures to be displaying.
+
 Another way to visualize this data dataset is by creating a species accumulation curve.  
 
-```{r Species Accumulation Curve}
+```{r Species Accumulation Calculation}
 #Species accumulation curves allow us to visualize how many species are present for a certain number of sites. Among other functions, it allows us to determine if species count is increasing with sampling effort (number of sites).
 species_accumulation <- specaccum(BCI)
 
-#Plotting a basic species accumulation curve
+#print this out to see what the data looks like
+species_accumulation
+```
+
+
+After calculating species accumulation, we can proceed with actually visualizing the data.  
+
+```{r Species Accumulation Curve}
+
+#Plotting a basic species accumulation curve, again we can use plot()
 plot(species_accumulation) 
 
 #We can edit this graph to better visualize the data, and to be more visually appealing. The aesthetic options in this basic R function, plot(), vary slightly than the ones you have become familiar with in ggplot2 so we have included a list of the new options below.
@@ -187,7 +205,7 @@ plot(species_accumulation, ci.type="poly", col="blue", lwd=3, ci.lty=0, ci.col="
 Now it's your turn to further investigate this dataset (BCI). Your goals are to subset the dataframe, and then to come up with a hypothesis that you can test using the skills from Part I and Part II of this tutorial. 
 
 ##Question, Hypothesis, Prediction
-What are you aiming to investigate? Practice your QHP skills:
+
 
 ##What subset of the data are you going to look into
 
