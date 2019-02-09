@@ -307,11 +307,9 @@ Adapted from
 https://rstudio-pubs-static.s3.amazonaws.com/5588_72eb65bfbe0a4cb7b655d2eee0751584.html
 
 
-
-
 ---- Human Demography Project
 
-Sometimes the data does not come from an R package but rather from an Excel file. To load that data into R, we need to install the readxl package. Then we can create an object (demographyData) in R that has the information from the Excel file. Viewing that object lets us see the dataset.
+Sometimes you may be given the number of individuals in a given age class that died, rather than the ages at which different individuals died, such as in this human demography data from a lab run in previous years. Since it was collected, this data does not come from an R package but rather from an Excel file. To load that data into R, we need to install the readxl package. Then we can create an object (demographyData) in R that has the information from the Excel file. Viewing that object lets us see the dataset.
   
 ```{r Upload Data }
 install.packages("readxl")
@@ -335,22 +333,17 @@ DemographySubset <- dplyr::select(demographyData,c(Age.Class,Pre.1840.Female,Pre
 ```
 
 
-
-```{r Subsets}
-fpre1840 <- subset(demographyData, select = "Pre-1840 Female")
-mpre1840 <- subset(demographyData, select = "Pre-1840 Male")
-
-```
-
 Then we'll need to calculate the proportion of individuals alive for each age class. Since the data we're given is the number of people that have died for each age class, we'll have to do some math. First, we need to calculate the number of people that are still alive for each age class. Then we'll need to use that information to calculate the proportion of people that are still alive for each age class.
 
-Since we'll want to run the same algorithm multiple times, it makes sense to write a couple functions that can do this math for us. 
 
-```{r}
-
+```{r Calculate Proportions}
+#Create a new column of the number of dead people by cumulatively adding the rows of data
 DemographySubset$P1840FNumDead <- cumsum(DemographySubset$Pre.1840.Female)
+#Create a new column of the number of people alive, with the first row as the total
 DemographySubset$P1840FNumAlive[1] <- sum(DemographySubset$Pre.1840.Female)
+#The consecutive rows are that total - the number of people dead
 DemographySubset$P1840FNumAlive[2:20] <- sum(DemographySubset$Pre.1840.Female) - DemographySubset$P1840FNumDead[1:19]
+#Create a new column of the proportion of people alive 
 DemographySubset$P1840FPropAlive <- DemographySubset$P1840FNumAlive/DemographySubset$P1840FNumAlive[1]
 
 DemographySubset$P1840MNumDead <- cumsum(DemographySubset$Pre.1840.Male)
@@ -360,87 +353,22 @@ DemographySubset$P1840MPropAlive <- DemographySubset$P1840MNumAlive/DemographySu
 
 ```
 
+Then we can use ggplot2 to plot survivorship curves of the data. We'll have to specify the order of the age classes on the x axis, because otherwise ggplot will plot them in numeric order (where the age class of 6-10 will follow 56-60 rather than 0-5)
 
 ```{r}
 ggplot(DemographySubset) +
   geom_point(aes(x = factor(Age.Class, levels = c("0-5","6-10", "11-15", "16-20", "21-25", "26-30", "31-35", "36-40", "41-45", "46-50", "51-55", "56-60", "61-65", "66-70", "71-75","76-80", "81-85", "86-90", "91-95", "96+")), y = as.numeric(P1840FPropAlive), color="red")) +
   geom_point(aes(x = factor(Age.Class, levels = c("0-5","6-10", "11-15", "16-20", "21-25", "26-30", "31-35", "36-40", "41-45", "46-50", "51-55", "56-60", "61-65", "66-70", "71-75","76-80", "81-85", "86-90", "91-95", "96+")), y = as.numeric(P1840MPropAlive),color="blue")) +
   theme(legend.position = "right")  +
-  scale_color_manual(labels = c("Female", "Male"), values = c("red", "blue")) +
+  scale_color_manual(labels = c("Pre-1840 Female", "Pre-1840 Male"), values = c("red", "blue")) +
   theme_cowplot() +
   xlab("Age Class") + 
   theme(axis.text.x = element_text(angle = 35, hjust = 1)) +
   ylab("Survivorship")
 
-```
-
-
-
-```{r Functions}
-
-#function that calculates the number of people still alive
-numStillAlive <- function(dataframeCol) { 
-  totalStartAlive <- sum(dataframeCol) #find the total number of people alive
-  for (i in nrow(dataframeCol)){ #for every row (age class)
-    sumDead <- rowSums(subset1[1:i,1]) #add every row including that one to find the total dead
-    stillAlive <- totalStartAlive - sumDead #subtract total dead from total alive to find still alive
-    listStillAlive <- c(listStillAlive,stillAlive) #make a list of the number of people still alive
-  }
-  return(listStillAlive)
-}
-
-#Function that calculates the proportion of people still alive
-proportionAlive <- function(dataframe) {
-  for (i in col(dataframe)) { #for every number on the list
-    a <- dataframe[i]/dataframe[1] #divide that that number by the first number to find prop. alive
-    list <- c(list,a) #make a list of the proportion of people alive
-  }
-  return(list)
-}
-
 
 ```
 
-Then we'll just need to run our data through the functions and use the numbers it produces. We can also add a column indicating the proportion of people still alive to each of our datasets, as well as the values that we'll want on the x axis.
-
-```{r}
-DemographySubset$Pre1840FStillAlive <- numStillAlive(DemographySubset$Pre.1840.Female)
-```
-
-
-
-```{r Calculate Proportions}
-fpre1840alive <- as.data.frame(numStillAlive(fpre1840))
-fpre1840prop <- proportionAlive(fpre1840alive)
-fpre1840$PropAlive <- fpre1840prop[2:21]
-fpre1840$xAxis <- 1:20
-
-mpre1840alive <- as.data.frame(numStillAlive(mpre1840))
-mpre1840prop <- proportionAlive(mpre1840alive)
-mpre1840$PropAlive <- mpre1840prop[2:21]
-mpre1840$xAxis <- 1:20
-
-#mpre1840$xAxis <- ("0-5" "6-10" "11-15" "16-20" "21-25" "26-30" "31-35" "36-40" "41-45" "46-50" "51-55" "56-60" "61-65" "66-70" "71-75""76-80" "81-85" "86-90" "91-95" "96+")
-
-```
-
-Then we can use ggplot2 to plot survivorship curves of the data.
-
-```{r Plot Survivorship}
-ggplot(fpre1840) +
-  aes(x = as.numeric(xAxis), y = as.numeric(PropAlive)) +
-  geom_line() +
-  theme_cowplot() +
-  xlab("Age Class") + 
-  ylab("Survivorship")
-
-ggplot(mpre1840) +
-  aes(x = as.numeric(xAxis), y = as.numeric(PropAlive)) +
-  geom_line() +
-  theme_cowplot() +
-  xlab("Age Class") + 
-  ylab("Survivorship")
-```
 
 
 #Trouble shooting
