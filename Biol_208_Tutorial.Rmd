@@ -315,17 +315,25 @@ Sometimes the data does not come from an R package but rather from an Excel file
   
 ```{r Upload Data }
 install.packages("readxl")
+if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 library(readxl)
 library(ggplot2)
 library(cowplot)
+library(plyr)
 
 
 demographyData <- read_excel("BIO208_Demog_Practice.xlsx")
-View(demographyData)
+#View(demographyData)
+names(demographyData) <- make.names(names(demographyData))
 
 ```
 
 In the above survival curve, it looked like males had a steeper curve than females. Let's see if that pattern holds for this data. To do that, we'll need to subset out the data both by year and by sex - for the sake of simplicity, we can just use the pre-1840 data for men and women.
+
+```{r}
+DemographySubset <- dplyr::select(demographyData,c(Age.Class,Pre.1840.Female,Pre.1840.Male))
+```
+
 
 
 ```{r Subsets}
@@ -338,13 +346,43 @@ Then we'll need to calculate the proportion of individuals alive for each age cl
 
 Since we'll want to run the same algorithm multiple times, it makes sense to write a couple functions that can do this math for us. 
 
+```{r}
+
+DemographySubset$P1840FNumDead <- cumsum(DemographySubset$Pre.1840.Female)
+DemographySubset$P1840FNumAlive[1] <- sum(DemographySubset$Pre.1840.Female)
+DemographySubset$P1840FNumAlive[2:20] <- sum(DemographySubset$Pre.1840.Female) - DemographySubset$P1840FNumDead[1:19]
+DemographySubset$P1840FPropAlive <- DemographySubset$P1840FNumAlive/DemographySubset$P1840FNumAlive[1]
+
+DemographySubset$P1840MNumDead <- cumsum(DemographySubset$Pre.1840.Male)
+DemographySubset$P1840MNumAlive[1] <- sum(DemographySubset$Pre.1840.Male)
+DemographySubset$P1840MNumAlive[2:20] <- sum(DemographySubset$Pre.1840.Male) - DemographySubset$P1840MNumDead[1:19]
+DemographySubset$P1840MPropAlive <- DemographySubset$P1840MNumAlive/DemographySubset$P1840MNumAlive[1]
+
+```
+
+
+```{r}
+ggplot(DemographySubset) +
+  geom_point(aes(x = factor(Age.Class, levels = c("0-5","6-10", "11-15", "16-20", "21-25", "26-30", "31-35", "36-40", "41-45", "46-50", "51-55", "56-60", "61-65", "66-70", "71-75","76-80", "81-85", "86-90", "91-95", "96+")), y = as.numeric(P1840FPropAlive), color="red")) +
+  geom_point(aes(x = factor(Age.Class, levels = c("0-5","6-10", "11-15", "16-20", "21-25", "26-30", "31-35", "36-40", "41-45", "46-50", "51-55", "56-60", "61-65", "66-70", "71-75","76-80", "81-85", "86-90", "91-95", "96+")), y = as.numeric(P1840MPropAlive),color="blue")) +
+  theme(legend.position = "right")  +
+  scale_color_manual(labels = c("Female", "Male"), values = c("red", "blue")) +
+  theme_cowplot() +
+  xlab("Age Class") + 
+  theme(axis.text.x = element_text(angle = 35, hjust = 1)) +
+  ylab("Survivorship")
+
+```
+
+
+
 ```{r Functions}
 
 #function that calculates the number of people still alive
-numStillAlive <- function(subset1) { 
-  totalStartAlive <- sum(subset1) #find the total number of people alive
-  for (i in row(subset1)){ #for every row (age class)
-    sumDead <- sum(subset1[1:i,1]) #add every row including that one to find the total dead
+numStillAlive <- function(dataframeCol) { 
+  totalStartAlive <- sum(dataframeCol) #find the total number of people alive
+  for (i in nrow(dataframeCol)){ #for every row (age class)
+    sumDead <- rowSums(subset1[1:i,1]) #add every row including that one to find the total dead
     stillAlive <- totalStartAlive - sumDead #subtract total dead from total alive to find still alive
     listStillAlive <- c(listStillAlive,stillAlive) #make a list of the number of people still alive
   }
@@ -364,6 +402,11 @@ proportionAlive <- function(dataframe) {
 ```
 
 Then we'll just need to run our data through the functions and use the numbers it produces. We can also add a column indicating the proportion of people still alive to each of our datasets, as well as the values that we'll want on the x axis.
+
+```{r}
+DemographySubset$Pre1840FStillAlive <- numStillAlive(DemographySubset$Pre.1840.Female)
+```
+
 
 
 ```{r Calculate Proportions}
