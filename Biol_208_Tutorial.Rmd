@@ -24,12 +24,9 @@ if (!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
 if (!require("UsingR")) install.packages("UsingR"); library(UsingR)
 ```
 
-<<<<<<< HEAD
-The datasets function allows us to access the datasets already available in R. Head shows the first several lines and tail shows the last several lines. Running both are useful to begin to investigate your data, confirm the dataset is complete, and check that each column has the same number of rows. Summary will provide the five number summary for each variable in the data set and will let you know if there is any missing data ("NA"s).
-=======
 
-Datasets allows us to access the datasets already available in R. Head shows the first several lines and tail shows the last several lines. Running both are useful to begin to investigate your data, confirm the dataset is complete, and check that each column has the same number of rows. Summary will provide the five number summary for each variable in the data set and will let you know if there is any missing data ("NA"s).
->>>>>>> 255759eb7265cd2ceebb33cac1672d9d42367e10
+The datasets function allows us to access the datasets already available in R. Head shows the first several lines and tail shows the last several lines. Running both are useful to begin to investigate your data, confirm the dataset is complete, and check that each column has the same number of rows. Summary will provide the five number summary for each variable in the data set and will let you know if there is any missing data ("NA"s).
+
 
 ```{r setup, include=TRUE}
 datasets::iris
@@ -38,12 +35,8 @@ tail(iris)
 summary(iris)
 ```
 
-<<<<<<< HEAD
 Before running any other tests or visual analyses of your data, you should first look at the data (which can be done in the environment tab) and think about possible hypotheses that you could test. evnatually generating one hypothesis to test. In this example we will be testing the hypothesis that longer sepal lengths are correlated with longer petal lengths. Since the species of each flower could have an effect on petal and sepal length, we will want to look at the relationship between these variables for each species individually. To do this, we will want to split the data up by species, which we can do by creating a subset for each one. 
-=======
 
-Before running any other tests or visual analyses of your data, you should generate a hypothesis. In this example we will be testing the hypothesis that longer sepal lengths are correlated with longer petal lengths. Since the species of each flower could have an effect on petal and sepal length, we will want to look at the relationship between these variables for each species individually. To do this, we will want to split the data up by species, which we can do by creating a subset for each one. 
->>>>>>> 255759eb7265cd2ceebb33cac1672d9d42367e10
 
 ```{r Subset}
 setosa <- subset(iris,Species == "setosa")
@@ -61,7 +54,6 @@ simple.eda(iris$Petal.Length)
 ```
 Looking at the QQ plots, we can see that the data may not normally distributed (doesnt follow the diagnol line).
 
-<<<<<<< HEAD
 Since it is hard to accurately determine sometimes if a data set is normally distributed by looking at the histogram and QQ plot we will run a shapiro test to test the null hypothesis that the data is normally distributed. 
 
 ```{r}
@@ -80,10 +72,7 @@ shapiro.test(log10(iris$Petal.Length))
 
 
 To look at the distribution of species we will use a bar graph and a table since this is a categorical variable. We ran the code for both a table and bar graph so you can see the code required. However, both are not always required. Bar graphs are helpful for visiualizing general trends in very large data sets and tables are helpful to get the actual count of a specific category.
-=======
 
-To look at the distribution of species we will use a bar graph and a table since this is a categorical variable. 
->>>>>>> 255759eb7265cd2ceebb33cac1672d9d42367e10
 
 ```{r bar graph}
 ggplot(iris) + 
@@ -306,7 +295,8 @@ survfit is a function that creates survival curves from a formula (like Kaplan-M
   object <- survfit(dependent variable ~ independent variable, data = dataset, conf.type = 
   confidence interval)
 
-km.by.sex, then, is assigned the value of the results of the analysis of sex on survival, using data from the lung dataset, and log-log confidence intervals
+km.by.sex, then, is assigned the value of the results of the analysis of sex on survival, using data from the lung dataset, and log-log confidence intervals. 
+
 
 ```{r}
 # Kaplan-Meier analysis
@@ -326,7 +316,7 @@ The primary black line that appears is the curve, while the two dashed lines are
 plot(km.as.one, xlab="Days",ylab="Proportion Surviving")
 ```
 
-We can also graph the km.by.sex data, and this plot will need a legend to differentiate between the two curves.
+We can also graph the km.by.sex data, and this plot will need a legend to differentiate between the two curves. Rather than running the following code line by line, you can click the green arrow pointing to the right in the top right corner of the box. That will run the entire codeblock and give you a graph with the proper legend and title.
 
 ```{r Plot km by sex}
 plot(km.by.sex,col=c('blue','red'),xlab="Days",ylab="Proportion Surviving")
