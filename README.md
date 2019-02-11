@@ -1,12 +1,12 @@
 # Biology 208 tutorial
 
 ## Introduction
-Using R is an important skill that Bucknell biology professors are beginning to incorporate in their courses. While typically touted as a "better way to make graphs," there are many benefits to learning R. This includes better dataset preparation and manipulation, data analyses for different types of data, and better data visualization.
+Using R is an important skill that Bucknell biology professors are beginning to incorporate in their courses. While R is typically touted as a "better way to make graphs," there are many benefits to learning R, including being able to easily prepare, maniuplate, run analyses for, and visualize many different types of data. 
 
 ## How to access and use this tutorial
-Within this github repository (folder) you will need to download several documents. This is most easily done by clicking the green, "Clone or Download Button" on the repo's main page. Click "Download ZIP." The folder should now be in your downloads folder and should be unzipped and moved to a known location such as your desktop.
+Within this github repository (folder) you will need to download several documents. This is most easily done by clicking the green "Clone or Download Button" on the repo's main page. Click "Download ZIP". The folder should now be in your downloads folder and should be unzipped and moved to a known location such as your desktop.
 
-Open this folder and then open the "Biol_208_Tutorial.Rmd" file. This first document is the R markdown which is the tutorial itself, and features introductory material, codes, and comments through out. Once your R markdown file is open, go to the "Files" tab in the bottom right quadrant of Rstudio. Click the "More" button and select "Set as Working Directory." At this point you should confirm that within this folder (in RStudio) there is an excel document labelled "BIO208_Demog_Practice.xlsx." This document contains Demography Data from previous 208 courses that will be used later in the R tutorial.
+Open this folder and then open the "Biol_208_Tutorial.Rmd" file. This first document is the R markdown which is the tutorial itself, and features introductory material, codes, and comments throughout. Once your R markdown file is open, go to the "Files" tab in the bottom right quadrant of Rstudio. Click the "More" button and select "Set as Working Directory." At this point you should confirm that within this folder (in RStudio) there is an excel document labelled "BIO208_Demog_Practice.xlsx." This document contains Demography Data from previous 208 courses that will be used later in the R tutorial.
 
 
 ## Working through the document
