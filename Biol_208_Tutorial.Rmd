@@ -58,7 +58,7 @@ simple.eda(iris$Petal.Length)
 ```
 
 
-Looking at the QQ plots, we can see that the data may not normally distributed.
+Looking at the QQ plots, we can see that the data may not be normally distributed.
 
 Since it can be hard to accurately determine if a data set is normally distributed by looking at the histogram and QQ plot, we will run a shapiro test to test the null hypothesis that the data is normally distributed. 
 
@@ -214,7 +214,7 @@ mean(diversity_dataset)
 
 While these plots and numbers help us get a better grasp of what the data looks like, it isn't the most useful for this dataset. If we are specifically interested in diversity we have to truly consider our axes and what we want our figures to be displaying.
 
-Another way to visualize this dataset is by creating a species accumulation curve. 
+Another way to visualize this dataset is by creating a species accumulation curve. The first step requires some calculations.
 
 
 ```{r Species Accumulation Calculation}
@@ -226,7 +226,7 @@ species_accumulation
 ```
 
 
-After calculating species accumulation, we can proceed with actually visualizing the data.  
+Now that we have calculated species accumulation, we can proceed with actually visualizing the data.  
 
 
 ```{r Species Accumulation Curve}
