@@ -366,9 +366,8 @@ Sometimes you may be given the number of individuals in a given age class that d
 
   
 ```{r Upload Data }
-install.packages("readxl")
+if (!require("readxl")) install.packages("readxl"); library(readxl)
 if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
-library(readxl)
 library(ggplot2)
 library(cowplot)
 library(plyr)
@@ -384,7 +383,7 @@ names(demographyData) <- make.names(names(demographyData))
 In the above survival curve, it looked like males had a steeper curve than females. Let's visualize this data and see if that pattern holds. To do that, we'll need to subset out the data both by year and by sex - for the sake of simplicity, we can just use the pre-1840 data for men and women.
 
 
-```{r}
+```{r Subset the Data}
 DemographySubset <- dplyr::select(demographyData,c(Age.Class,Pre.1840.Female,Pre.1840.Male))
 ```
 
@@ -414,10 +413,10 @@ DemographySubset$P1840MPropAlive <- DemographySubset$P1840MNumAlive/DemographySu
 Then we can use ggplot2 to plot survivorship curves of the data. We'll have to specify the order of the age classes on the x axis, because otherwise ggplot will plot them in numeric order (where the age class of 6-10 will follow 56-60 rather than 0-5)
 
 
-```{r}
+```{r Plot Survival Curves}
 ggplot(DemographySubset) +
-  geom_point(aes(x = factor(Age.Class, levels = c("0-5","6-10", "11-15", "16-20", "21-25", "26-30", "31-35", "36-40", "41-45", "46-50", "51-55", "56-60", "61-65", "66-70", "71-75","76-80", "81-85", "86-90", "91-95", "96+")), y = as.numeric(P1840FPropAlive), color="red")) +
-  geom_point(aes(x = factor(Age.Class, levels = c("0-5","6-10", "11-15", "16-20", "21-25", "26-30", "31-35", "36-40", "41-45", "46-50", "51-55", "56-60", "61-65", "66-70", "71-75","76-80", "81-85", "86-90", "91-95", "96+")), y = as.numeric(P1840MPropAlive),color="blue")) +
+  geom_step(aes(x = factor(Age.Class, levels = c("0-5","6-10", "11-15", "16-20", "21-25", "26-30", "31-35", "36-40", "41-45", "46-50", "51-55", "56-60", "61-65", "66-70", "71-75","76-80", "81-85", "86-90", "91-95", "96+")), y = as.numeric(P1840FPropAlive), color="blue"), group = 1) +
+  geom_step(aes(x = factor(Age.Class, levels = c("0-5","6-10", "11-15", "16-20", "21-25", "26-30", "31-35", "36-40", "41-45", "46-50", "51-55", "56-60", "61-65", "66-70", "71-75","76-80", "81-85", "86-90", "91-95", "96+")), y = as.numeric(P1840MPropAlive),color="red"), group = 1) +
   theme(legend.position = "right")  +
   scale_color_manual(labels = c("Pre-1840 Female", "Pre-1840 Male"), values = c("red", "blue")) +
   theme_cowplot() +
