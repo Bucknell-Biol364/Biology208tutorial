@@ -23,7 +23,7 @@ if (!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
 if (!require("UsingR")) install.packages("UsingR"); library(UsingR)
 ```
 
-Datasets allows us to access the datasets already available in R. Head shows the first several lines and tail shows the last several lines. Running both are useful to begin to investigate your data, confirm the dataset is complete, and check that each column has the same number of rows. Summary will provide the five number summary for each variable in the data set and will let you know if there is any missing data ("NA"s).
+The datasets function allows us to access the datasets already available in R. Head shows the first several lines and tail shows the last several lines. Running both are useful to begin to investigate your data, confirm the dataset is complete, and check that each column has the same number of rows. Summary will provide the five number summary for each variable in the data set and will let you know if there is any missing data ("NA"s).
 
 ```{r setup, include=TRUE}
 datasets::iris
@@ -32,13 +32,14 @@ tail(iris)
 summary(iris)
 ```
 
-Before running any other tests or visual analyses of your data, you should generate a hypothesis. In this example we will be testing the hypothesis that longer sepal lengths are correlated with longer petal lengths. Since the species of each flower could have an effect on petal and sepal length, we will want to look at the relationship between these variables for each species individually. To do this, we will want to split the data up by species, which we can do by creating a subset for each one. 
+Before running any other tests or visual analyses of your data, you should first look at the data (which can be done in the environment tab) and think about possible hypotheses that you could test. evnatually generating one hypothesis to test. In this example we will be testing the hypothesis that longer sepal lengths are correlated with longer petal lengths. Since the species of each flower could have an effect on petal and sepal length, we will want to look at the relationship between these variables for each species individually. To do this, we will want to split the data up by species, which we can do by creating a subset for each one. 
 
 ```{r Subset}
 setosa <- subset(iris,Species == "setosa")
 versicolor <- subset(iris,Species == "versicolor")
 virginica <- subset(iris,Species == "virginica")
 ```
+These subsets that you just created can also be viewed within the environment tab.
 
 Next, since these variables are quantitative, you want to run the simple.eda function on each variable from the main data set not the subsets, to determine if your data is normally distributed. This function will display a histogram, boxplot, and QQ plot for each subset. If the data is normally distributed, then it is possible to use parametric tests to test the hypotheses - on a histogram, this looks like a curve where the middle is the highest and the two sides fall away evenly. If the points follow the diagonal line in the QQ plot, then the data is most likely normally distributed.
 
@@ -46,8 +47,26 @@ Next, since these variables are quantitative, you want to run the simple.eda fun
 simple.eda(iris$Sepal.Length)
 simple.eda(iris$Petal.Length)
 ```
+Looking at the QQ plots, we can see that the data may not normally distributed (doesnt follow the diagnol line).
 
-To look at the distribution of species we will use a bar graph and a table since this is a categorical variable. 
+Since it is hard to accurately determine sometimes if a data set is normally distributed by looking at the histogram and QQ plot we will run a shapiro test to test the null hypothesis that the data is normally distributed. 
+
+```{r}
+shapiro.test(iris$Sepal.Length)
+shapiro.test(iris$Petal.Length)
+```
+
+Since both p-values are less than 0.05, we reject the null hypothesis that the data is normally distributed. Since we reject the null hypothesis you can transform the data using log10 (using the function log actually runs the natural log) to try and have your data be normally distributed.
+
+```{r}
+simple.eda(log10(iris$Sepal.Length))
+simple.eda(log10(iris$Petal.Length))
+shapiro.test(log10(iris$Sepal.Length))
+shapiro.test(log10(iris$Petal.Length))
+```
+
+
+To look at the distribution of species we will use a bar graph and a table since this is a categorical variable. We ran the code for both a table and bar graph so you can see the code required. However, both are not always required. Bar graphs are helpful for visiualizing general trends in very large data sets and tables are helpful to get the actual count of a specific category.
 
 ```{r bar graph}
 ggplot(iris) + 
@@ -66,24 +85,8 @@ ggplot(iris) +
 table(iris$Species)
 ```
 
-
 You can also use pie charts to display categorical data. However, because it's hard to usefully distinguish between the sizes of each wedge of the pie, they are usually not used. Bar graphs and tables are much more useful in displaying the distribution of a categorical variable.
 
-Since it is hard to accurately determine sometimes if a data set is normally distributed by looking at the histogram and QQ plot we will run a shapiro test to test the null hypothesis that the data is normally distributed. 
-
-```{r}
-shapiro.test(iris$Sepal.Length)
-shapiro.test(iris$Petal.Length)
-```
-
-Since both p-values are less than 0.05, we reject the null hypothesis that the data is normally distributed. Since we reject the null hypothesis you can transform the data using log10 (using the function log actually runs the natural log) to try and have your data be normally distributed.
-
-```{r}
-simple.eda(log10(iris$Sepal.Length))
-simple.eda(log10(iris$Petal.Length))
-shapiro.test(log10(iris$Sepal.Length))
-shapiro.test(log10(iris$Petal.Length))
-```
 
 Since petal length was not normally distributed after transforming the data, we will create a scatterplot only to help us visualize the data and not to test the relationship. One thing to note is that since the data is not normally distributed we set standard error to false so that it does not display the standard error bars around the line. If the data had been normally distributted you would set se= TRUE to include it.
 
@@ -99,7 +102,7 @@ ggplot(iris, aes(x=Sepal.Length, y =Petal.Length))+
   scale_color_hue(l = 90, c = 200)
 ```
 
-However, to determine if there is a signifcant relationship between the two variables we will have to run a non-parametric test. A mann whitney u test, which is run using the following chunk of code, will work here. 
+However, to determine if there is a signifcant relationship between the two variables we will have to run a non-parametric test. A non-parametric test is run when the varibales in your data arent normally distributed. A mann whitney u test, which is run using the following chunk of code, will work here. 
 
 ```{r}
 wilcox.test(setosa$Petal.Length, setosa$Sepal.Length)
@@ -107,8 +110,23 @@ wilcox.test(versicolor$Petal.Length, versicolor$Sepal.Length)
 wilcox.test(virginica$Petal.Length, virginica$Sepal.Length)
 ```
 
-Since all three p-values are less than 0.05, we reject the null hypothesis. We have sufficient evidence that sepal length affects petal length for each species. There were other variables in the data set for Iris. Pick different variables, create your own hypothesis, and explore and test the significance of the data.
+Since all three p-values are less than 0.05, we reject the null hypothesis. We have sufficient evidence that sepal length affects petal length for each species. 
 
+There were many other variables in the data set for Iris. Pick different variables, create your own hypothesis, and explore and test the significance of the data.
+
+##Question, Hypothesis, Prediction
+
+
+##What subset of the data are you going to look into
+
+
+##Testing normality of data
+
+
+##Data visualization
+
+
+##Statistical Tests
 
 
 #Part 2: Shannon Diversity Index
