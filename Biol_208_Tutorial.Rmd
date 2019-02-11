@@ -130,7 +130,7 @@ There were many other variables in the data set for Iris. Pick different variabl
 ##Testing normality of data
 
 
-##Data visualization
+##Data visualization: what graphs will you use to investigate this relationship?
 
 
 ##Statistical Tests
@@ -142,6 +142,7 @@ We can also use R to investigate and explore other datasets, as well as answer d
 
 ```{r Preliminary Steps of Data Preparation}
 
+#run this entire code chuck at once instead of line by line
 #first need to install and load vegan 
 if (!require("vegan")) install.packages("vegan"); library(vegan)
 
@@ -161,7 +162,7 @@ rownames(BCI)
 
 ```
 
-After learning more about the dataset we can now use vegan to run a Shannon-diversity index to determine how diverse the Barro Colorado Island plots are!
+After learning more about the dataset we can now use vegan to run a Shannon-diversity index to determine how diverse the Barro Colorado Island plots are! The first part we will simply do the calculations for Shannon-diversity index, using the vegan package. 
 
 ```{r Shannon-diversity index}
 
@@ -193,9 +194,9 @@ mean(diversity_dataset)
 
 ```
 
-While these plots, and numbers help us get a better grasp of what the data looks like- it isn't the most useful for this dataset. If we are specifically interested in diversity we have to truly consider our axes and what we want our figures to be displaying.
+While these plots and numbers help us get a better grasp of what the data looks like- it isn't the most useful for this dataset. If we are specifically interested in diversity we have to truly consider our axes and what we want our figures to be displaying.
 
-Another way to visualize this data dataset is by creating a species accumulation curve.  
+Another way to visualize this dataset is by creating a species accumulation curve.  
 
 ```{r Species Accumulation Calculation}
 #Species accumulation curves allow us to visualize how many species are present for a certain number of sites. Among other functions, it allows us to determine if species count is increasing with sampling effort (number of sites).
@@ -223,6 +224,11 @@ plot(species_accumulation)
 plot(species_accumulation, ci.type="poly", col="blue", lwd=3, ci.lty=0, ci.col="orange", ylab ="Species Accumulation") 
 ```
 
+
+
+
+
+#Your turn
 Now it's your turn to further investigate this dataset (BCI). Your goals are to subset the dataframe, and then to come up with a hypothesis that you can test using the skills from Part I and Part II of this tutorial. 
 
 ##Question, Hypothesis, Prediction
@@ -234,10 +240,10 @@ Now it's your turn to further investigate this dataset (BCI). Your goals are to 
 ##Testing normality of data
 
 
-##Data visualization
+##Data visualization: what kind of figure is best for visualizing the relationships you're investigating?
 
 
-##Statistical Tests
+##Statistical Tests: 
 
 
 #Part 3: Survivorship Curves
@@ -388,7 +394,6 @@ ggplot(DemographySubset) +
   theme(axis.text.x = element_text(angle = 35, hjust = 1)) +
   ylab("Survivorship")
 
-
 ```
 
 
@@ -403,11 +408,12 @@ ggplot(DemographySubset) +
 For more guidance in using R, there are many resources available on the internet, such as Stack Overflow. However, we will first refer you to the other tutorials you may or may not have taken in your previous core biology courses (205-207) as they lead up to the skills and ideas used in this tutorial. 
 
 #Acknowledgments
-We would like to acknowledge the use of several resources cited throughout this tutorial and stack overflow for aiding us. Additionally, we would like to reference the tutorials for the 205-207 courses that we referenced to determine what skill and experience level we should be aiming for. We divided the work put into this tutorial amongst group members as follows:
+We would like to acknowledge the use of several resources cited throughout this tutorial for aiding us. Additionally, we would like to note the tutorials for the 205-207 courses that we referenced to determine what skill and experience level we should be aiming for. We divided the work put into this tutorial amongst group members as follows:
 Justin: R Basics/Review
 Megan: Shannon Diversity & scatterplot used in Part I
 Katie: Survivorship Curves
-We all contributed notes throughout our own sections, and contributed thoughtfully to how the tutorial was structured in terms of complexity and subject material. We also all looked over each others sections to make sure the tutorial was succint and built well off of previous sections.
+We all contributed notes throughout our own sections, and contributed thoughtfully to how the tutorial was structured in terms of complexity and subject material. We also all looked over each others sections to make sure the tutorial was succint and built well off of previous sections. Our peer review, Matt McGauley, provided insightful and very detailed feedback to better the final product! 
+
 
 We would also like to acknowledge the use of google, and stack overflow. The following websites/blogs/tutorials were also used:
 http://www.flutterbys.com.au/stats/tut/tut13.2.html
