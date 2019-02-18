@@ -1,0 +1,197 @@
+---
+title: "208_Tutorial"
+author: "Megan, Justin, Katie"
+date: "2/18/2019"
+output:
+  html_document: default
+  pdf_document: default
+  toc: true
+  toc_depth: 2
+---
+
+This is Part 3, of a 3 part series of R tutorials aimed at students enrolled in BIOL 208. In this section, we will cover how to do complex calculations in R as well as some useful packages. 
+
+#Survivorship Curves
+Another topic covered during some years of 208 is mortality and survivorship. Survivorship curves indicate the proportion of a population that is still alive after a certain period of time. Raw data is usually collected as the age of the individuals when they die. You can then make a curve by plotting the proportion of individuals still alive at a given age. This allows you to compare the survivorship of different populations or of one population over time. 
+
+The survival package in R has some useful datasets that can be used to practice making a survival curve. First, we can load the package and then pick the specific dataset, lung, to use for this example. Again, we can use head, tail, and summary to get a sense of the data.
+
+
+```{r Survival Package and Lung Data}
+# Load survival
+library(survival)
+
+# See the datasets in the survival package
+data(package = "survival")
+
+# Load the lung data
+data(lung)
+
+# First 5 rows of the lung data
+head(lung)
+tail(lung)
+summary(lung)
+```
+
+
+The lung dataset shows the survival of patients with advanced lung cancer. 
+
+Inst = institution code
+Time = survival time (days)
+Status = censoring status (1 = censored, 2 = dead)
+Age = age (years)
+Sex = sex (1 = male, 2 = female)
+ph.ecog =	ECOG performance score (0=good 5=dead)
+ph.karno =	Karnofsky performance score (bad=0-good=100) rated by physician
+pat.karno =	Karnofsky performance score as rated by patient
+meal.cal =	Calories consumed at meals
+wt.loss =	Weight loss in last six months
+
+Notice in the summary tab that there is some missing data for the bottom row of variables, as indicated by the NA's. If this was in data that we cared about, it would be important to only use the individuals for which we have data; however, since we don't need any of that information, we can continue without worrying about missing data.
+
+First, we'll add a column to the dataset that has the survival time for individuals that have died: 
+
+  dataset$columnName <- with(dataset that the information is coming from, desired information)
+  
+
+```{r}
+# Add survival object column
+lung$SurvObj <- with(lung, Surv(time, status == 2))
+
+# Check data -- scroll to the far right to make sure it's been added
+head(lung)
+```
+
+
+The Kaplan-Meier analysis allows us to estimate the population survival over time from a sample, even if patients drop out of the test or are studied for different lengths of time. We'll run this analysis on the data in two ways: first, we'll look at the data as a whole, and second, we'll divide the data by sex.
+
+survfit is a function that creates survival curves from a formula (like Kaplan-Meier):
+
+  object <- survfit(dependent variable ~ independent variable, data = dataset, conf.type = 
+  confidence interval)
+
+km.by.sex, then, is assigned the value of the results of the analysis of sex on survival, using data from the lung dataset, and log-log confidence intervals. 
+
+
+```{r}
+# Kaplan-Meier analysis
+km.as.one <- survfit(SurvObj ~ 1, data = lung, conf.type = "log-log")
+km.by.sex <- survfit(SurvObj ~ sex, data = lung, conf.type = "log-log")
+
+# Show object
+km.as.one
+km.by.sex
+```
+
+
+Now we can make our plot. GGplot is a good package to use to make plots, but it's also possible to use the base package that comes with and is automatically loaded in R. Since we showed you how to use ggplot above, we'll use the base package now. 
+
+The primary black line that appears is the curve, while the two dashed lines are the confidence intervals.
+
+
+```{r Plot km as one}
+plot(km.as.one, xlab="Days",ylab="Proportion Surviving")
+```
+
+
+We can also graph the km.by.sex data, and this plot will need a legend to differentiate between the two curves. Rather than running the following code line by line, you can click the green arrow pointing to the right in the top right corner of the box. That will run the entire codeblock and give you a graph with the proper legend and title.
+
+
+```{r Plot km by sex}
+plot(km.by.sex,col=c('blue','red'),xlab="Days",ylab="Proportion Surviving")
+legend("right",legend = c("Male","Female"), col=c("blue","red"), lty = 1)
+title("Kaplan-Meier Curves \n by Sex") #\n indicates a line break
+```
+
+
+Adapted from
+https://rstudio-pubs-static.s3.amazonaws.com/5588_72eb65bfbe0a4cb7b655d2eee0751584.html
+
+
+---- Human Demography Project ----
+
+Sometimes you may be given the number of individuals in a given age class that died, rather than the ages at which different individuals died, such as in this human demography data from a lab run in previous years. Since it was collected, this data does not come from an R package but rather from an Excel file. To load that data into R, we need to install the readxl package. Then we can create an object (demographyData) in R that has the information from the Excel file. Viewing that object lets us see the dataset.
+
+  
+```{r Upload Data }
+if (!require("readxl")) install.packages("readxl"); library(readxl)
+if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
+library(ggplot2)
+library(cowplot)
+library(plyr)
+
+
+demographyData <- read_excel("BIO208_Demog_Practice.xlsx")
+#View(demographyData)
+names(demographyData) <- make.names(names(demographyData))
+
+```
+
+
+In the above survival curve, it looked like males had a steeper curve than females. Let's visualize this data and see if that pattern holds. To do that, we'll need to subset out the data both by year and by sex - for the sake of simplicity, we can just use the pre-1840 data for men and women.
+
+
+```{r Subset the Data}
+DemographySubset <- dplyr::select(demographyData,c(Age.Class,Pre.1840.Female,Pre.1840.Male))
+```
+
+
+Then we'll need to calculate the proportion of individuals alive for each age class. Since the data we're given is the number of people that have died for each age class, we'll have to do some math. First, we need to calculate the number of people that are still alive for each age class. Then we'll need to use that information to calculate the proportion of people that are still alive for each age class.
+
+
+```{r Calculate Proportions}
+#Create a new column of the number of dead people by cumulatively adding the rows of data
+DemographySubset$P1840FNumDead <- cumsum(DemographySubset$Pre.1840.Female)
+#Create a new column of the number of people alive, with the first row as the total...
+DemographySubset$P1840FNumAlive[1] <- sum(DemographySubset$Pre.1840.Female)
+#...and the consecutive rows as that total - the number of people dead
+DemographySubset$P1840FNumAlive[2:20] <- sum(DemographySubset$Pre.1840.Female) - DemographySubset$P1840FNumDead[1:19]
+#Create a new column of the proportion of people alive 
+DemographySubset$P1840FPropAlive <- DemographySubset$P1840FNumAlive/DemographySubset$P1840FNumAlive[1]
+
+
+DemographySubset$P1840MNumDead <- cumsum(DemographySubset$Pre.1840.Male)
+DemographySubset$P1840MNumAlive[1] <- sum(DemographySubset$Pre.1840.Male)
+DemographySubset$P1840MNumAlive[2:20] <- sum(DemographySubset$Pre.1840.Male) - DemographySubset$P1840MNumDead[1:19]
+DemographySubset$P1840MPropAlive <- DemographySubset$P1840MNumAlive/DemographySubset$P1840MNumAlive[1]
+
+```
+
+
+Then we can use ggplot2 to plot survivorship curves of the data. We'll have to specify the order of the age classes on the x axis, because otherwise ggplot will plot them in numeric order (where the age class of 6-10 will follow 56-60 rather than 0-5)
+
+
+```{r Plot Survival Curves}
+ggplot(DemographySubset) +
+  geom_step(aes(x = factor(Age.Class, levels = c("0-5","6-10", "11-15", "16-20", "21-25", "26-30", "31-35", "36-40", "41-45", "46-50", "51-55", "56-60", "61-65", "66-70", "71-75","76-80", "81-85", "86-90", "91-95", "96+")), y = as.numeric(P1840FPropAlive), color="blue"), group = 1) +
+  geom_step(aes(x = factor(Age.Class, levels = c("0-5","6-10", "11-15", "16-20", "21-25", "26-30", "31-35", "36-40", "41-45", "46-50", "51-55", "56-60", "61-65", "66-70", "71-75","76-80", "81-85", "86-90", "91-95", "96+")), y = as.numeric(P1840MPropAlive),color="red"), group = 1) +
+  theme(legend.position = "right")  +
+  scale_color_manual(labels = c("Pre-1840 Female", "Pre-1840 Male"), values = c("red", "blue")) +
+  theme_cowplot() +
+  xlab("Age Class") + 
+  theme(axis.text.x = element_text(angle = 35, hjust = 1)) +
+  ylab("Survivorship")
+
+```
+
+
+
+#Trouble shooting
+1.) It is essential you load packages prior to using the functions contained within them. Error messages that report "object" or "function" not found can often be traced back to improper loading of packages or not running the necessary steps beforehand (check your 'Environment' to be sure all datasets and variables are loaded). 
+2.) Syntax is especially important while coding in R. If not all of your graph changes are being incorporated be sure you have included "+" for each new line addition. Also be sure to close all parenthetical expressions properly. If your error reports an unexpected symbol, you may want to start by checking to make sure you have enough parenthesis included.
+3.) Use the R help section to learn what each function does, and how to set it up properly. You should also confirm your data conforms to the proper structure needed for that function. 
+4.) A very important thing to note is that it is very important to know what your null hypothesis is when running a test. R is a very powerful program that lets you run many different statistical tests however it is not very intuitive. Generally in stats, when you get a p-value of 0.05 that means the relationship you are testing is significant so intuitively when you run the shapiro test an easy mistake to make is that a p value of 0.05 means that your data is normally distributed. However, here the null hypothesis is that your data is normally distributed, which means that rejecting the null hypothesis here (p value < 0.05) means the data is NOT normally distributed.
+
+#Other resources
+For more guidance in using R, there are many resources available on the internet, such as Stack Overflow. However, we will first refer you to the other tutorials you may or may not have taken in your previous core biology courses (205-207) as they lead up to the skills and ideas used in this tutorial. 
+
+#Acknowledgments
+We would like to acknowledge the use of several resources cited throughout this tutorial for aiding us. Additionally, we would like to note the tutorials for the 205-207 courses that we referenced to determine what skill and experience level we should be aiming for. We divided the work put into this tutorial amongst group members as follows:
+Justin: R Basics/Review
+Megan: Shannon Diversity & scatterplot used in Part I
+Katie: Survivorship Curves
+We all contributed notes throughout our own sections, and contributed thoughtfully to how the tutorial was structured in terms of complexity and subject material. We also all looked over each others sections to make sure the tutorial was succint and built well off of previous sections. Our peer review, Matt McGauley, provided insightful and very detailed feedback to better the final product! 
+
+
+We would also like to acknowledge the use of google, and stack overflow. The following websites/blogs/tutorials were also used:
+http://www.flutterbys.com.au/stats/tut/tut13.2.html
