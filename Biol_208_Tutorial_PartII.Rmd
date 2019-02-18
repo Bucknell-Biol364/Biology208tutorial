@@ -1,0 +1,134 @@
+---
+title: "Biol_208_Tutorial_PartII"
+author: "Megan, Justin, Katie"
+date: "2/18/2019"
+output:
+  html_document: default
+  pdf_document: default
+  toc: true
+  toc_depth: 2
+---
+
+This is Part 2, of a 3 part series of R tutorials aimed at students enrolled in BIOL 208. In this section, we will cover some novel packages that you can use to investigate different kinds of data sets. 
+
+#Shannon Diversity Index
+We can also use R to investigate and explore other data sets, as well as answer different types of questions. For example, we can use R to investigate species diversity. One measure of diversity we learn about in 208 is the Shannon Diversity index. Conveniently, there is a package in R (vegan) specifically designed to calculate not only the Shannon Diversity index, but to also investigate other measures of diversity.
+
+```{r Preliminary Steps of Data Preparation}
+#run this entire code chuck at once instead of line by line
+
+#first need to install and load vegan and other packages we will be using
+if (!require("vegan")) install.packages("vegan"); library(vegan)
+if (!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
+if (!require("UsingR")) install.packages("UsingR"); library(UsingR)
+
+
+#Using a preloaded dataset BCI
+data("BCI")
+
+#learn more about this specific dataset by going to the console and typing "??BCI"
+
+#look at BCI dataset
+BCI
+
+#investigate this dataset
+ncol(BCI)
+colnames(BCI)
+nrow(BCI)
+rownames(BCI)
+
+```
+
+
+After learning more about the dataset we can now use vegan to run a Shannon-diversity index to determine how diverse the Barro Colorado Island plots are! The first part we will simply do the calculations for Shannon-diversity index, using the vegan package. 
+
+
+```{r Shannon-diversity index}
+
+#Two different ways to get shannon-diversity index for each site
+diversity(BCI)
+
+#This second method is more complex, but allows us to choose other possible indices to use instead of Shannon. Here we are going to assign our calculation to a new dataset labelled diversity_dataset
+diversity_dataset <- diversity(BCI, index= "shannon", MARGIN = 1, base = exp(1))
+diversity_dataset
+
+#checking the normality of this data
+qqnorm(diversity_dataset)
+qqline(diversity_dataset)
+
+#using a histogram to visualize data
+hist(diversity_dataset)
+
+#investigate diversity_dataset
+plot(diversity_dataset, col = "darkslategray3", lwd = 3)
+
+summary(diversity_dataset)
+ggplot(BCI)
+
+#getting the median diversity
+median(diversity_dataset)
+
+#getting the average diversity
+mean(diversity_dataset)
+```
+
+
+While these plots and numbers help us get a better grasp of what the data looks like, it isn't the most useful for this dataset. If we are specifically interested in diversity we have to truly consider our axes and what we want our figures to be displaying.
+
+Another way to visualize this dataset is by creating a species accumulation curve. The first step requires some calculations.
+
+
+```{r Species Accumulation Calculation}
+#Species accumulation curves allow us to visualize how many species are present for a certain number of sites. Among other functions, it allows us to determine if species count is increasing with sampling effort (number of sites).
+species_accumulation <- specaccum(BCI)
+
+#print this out to see what the data looks like
+species_accumulation
+```
+
+
+Now that we have calculated species accumulation, we can proceed with actually visualizing the data.  
+
+
+```{r Species Accumulation Curve}
+
+#Plotting a basic species accumulation curve, again we can use plot()
+plot(species_accumulation) 
+
+#We can edit this graph to better visualize the data, and to be more visually appealing. The aesthetic options in this basic R function, plot(), vary slightly than the ones you have become familiar with in ggplot2 so we have included a list of the new options below.
+
+#ci.type = bar, line, or polygon; Type of confidence interval drawn on the figure. 
+#col=""; color of species accumulation line
+#lwd= ; width of line
+#ci.lty= 0,1,2,3... ; Type of border on confidence polygon or confidence lines
+#ci.col=""; color for confidence line or polygon
+plot(species_accumulation, ci.type="poly", col="blue", lwd=3, ci.lty=0, ci.col="orange", ylab ="Species Accumulation") 
+```
+
+
+#Creating and Investigating Your Own Hypothesis
+Now it's your turn to further investigate this dataset (BCI). Your goals are to subset the dataframe, and then to come up with a hypothesis that you can test using the skills from Part I and Part II of this tutorial. 
+
+##Question, Hypothesis, Prediction
+
+
+##What subset of the data are you going to look into
+
+
+##Testing normality of data
+
+
+##Data visualization: what kind of figure is best for visualizing the relationships you're investigating?
+
+
+##Statistical Tests: 
+
+
+#Trouble shooting
+1.) It is essential you load packages prior to using the functions contained within them. Error messages that report "object" or "function" not found can often be traced back to improper loading of packages or not running the necessary steps beforehand (check your 'Environment' to be sure all datasets and variables are loaded). 
+2.) Syntax is especially important while coding in R. If not all of your graph changes are being incorporated be sure you have included "+" for each new line addition. Also be sure to close all parenthetical expressions properly. If your error reports an unexpected symbol, you may want to start by checking to make sure you have enough parenthesis included.
+3.) Use the R help section to learn what each function does, and how to set it up properly. You should also confirm your data conforms to the proper structure needed for that function. 
+4.) A very important thing to note is that it is very important to know what your null hypothesis is when running a test. R is a very powerful program that lets you run many different statistical tests however it is not very intuitive. Generally in stats, when you get a p-value of 0.05 that means the relationship you are testing is significant so intuitively when you run the shapiro test an easy mistake to make is that a p value of 0.05 means that your data is normally distributed. However, here the null hypothesis is that your data is normally distributed, which means that rejecting the null hypothesis here (p value < 0.05) means the data is NOT normally distributed.
+
+#Other resources
+For more guidance in using R, there are many resources available on the internet, such as Stack Overflow. However, we will first refer you to the other tutorials you may or may not have taken in your previous core biology courses (205-207) as they lead up to the skills and ideas used in this tutorial. 
