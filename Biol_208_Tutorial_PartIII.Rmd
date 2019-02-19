@@ -19,7 +19,7 @@ The survival package in R has some useful datasets that can be used to practice 
 
 ```{r Survival Package and Lung Data}
 # Load survival
-library(survival)
+if (!require("survival")) install.packages("survival"); library(survival)
 
 # See the datasets in the survival package
 data(package = "survival")
@@ -116,9 +116,9 @@ Sometimes you may be given the number of individuals in a given age class that d
 ```{r Upload Data }
 if (!require("readxl")) install.packages("readxl"); library(readxl)
 if (!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
-library(ggplot2)
-library(cowplot)
-library(plyr)
+if (!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
+if (!require("cowplot")) install.packages("cowplot"); library(cowplot)
+if (!require("plyr")) install.packages("plyr"); library(plyr)
 
 
 demographyData <- read_excel("BIO208_Demog_Practice.xlsx")
